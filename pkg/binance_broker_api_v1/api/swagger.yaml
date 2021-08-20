@@ -1,0 +1,1188 @@
+openapi: 3.0.0
+info:
+  title: Binance Broker API
+  description: "Binance official supported Postman collections.<br/>\n- API documents:\
+    \ https://binance-docs.github.io/Brokerage-API/General"
+  contact: {}
+  version: "1.0"
+servers:
+- url: http://example.com/sapi/v1/broker
+tags:
+- name: Misc
+paths:
+  /subAccount:
+    get:
+      tags:
+      - Misc
+      summary: Query Sub Account
+      operationId: QuerySubAccount
+      parameters:
+      - name: timestamp
+        in: query
+        required: true
+        style: form
+        explode: true
+        schema:
+          type: string
+          example: "{{timestamp}}"
+      - name: signature
+        in: query
+        required: true
+        style: form
+        explode: true
+        schema:
+          type: string
+          example: "{{signature}}"
+      - name: Content-Type
+        in: header
+        required: true
+        style: simple
+        explode: false
+        schema:
+          type: string
+          example: application/json
+      - name: X-MBX-APIKEY
+        in: header
+        required: true
+        style: simple
+        explode: false
+        schema:
+          type: string
+          example: "{{binance-api-key}}"
+      responses:
+        "200": {}
+      deprecated: false
+    post:
+      tags:
+      - Misc
+      summary: Create a Sub Account
+      operationId: CreateaSubAccount
+      parameters:
+      - name: tag
+        in: query
+        description: tag length should be less than 32
+        required: true
+        style: form
+        explode: true
+        schema:
+          type: string
+      - name: timestamp
+        in: query
+        required: true
+        style: form
+        explode: true
+        schema:
+          type: string
+          example: "{{timestamp}}"
+      - name: signature
+        in: query
+        required: true
+        style: form
+        explode: true
+        schema:
+          type: string
+          example: "{{signature}}"
+      - name: Content-Type
+        in: header
+        required: true
+        style: simple
+        explode: false
+        schema:
+          type: string
+          example: application/json
+      - name: X-MBX-APIKEY
+        in: header
+        required: true
+        style: simple
+        explode: false
+        schema:
+          type: string
+          example: "{{binance-api-key}}"
+      responses:
+        "200": {}
+      deprecated: false
+  /subAccount/margin:
+    post:
+      tags:
+      - Misc
+      summary: Enable Margin for Sub Account
+      operationId: EnableMarginforSubAccount
+      parameters:
+      - name: subAccountId
+        in: query
+        required: true
+        style: form
+        explode: true
+        schema:
+          type: string
+      - name: margin
+        in: query
+        description: only true for now
+        required: true
+        style: form
+        explode: true
+        schema:
+          type: string
+      - name: timestamp
+        in: query
+        required: true
+        style: form
+        explode: true
+        schema:
+          type: string
+          example: "{{timestamp}}"
+      - name: signature
+        in: query
+        required: true
+        style: form
+        explode: true
+        schema:
+          type: string
+          example: "{{signature}}"
+      - name: Content-Type
+        in: header
+        required: true
+        style: simple
+        explode: false
+        schema:
+          type: string
+          example: application/json
+      - name: X-MBX-APIKEY
+        in: header
+        required: true
+        style: simple
+        explode: false
+        schema:
+          type: string
+          example: "{{binance-api-key}}"
+      responses:
+        "200": {}
+      deprecated: false
+  /subAccount/futures:
+    post:
+      tags:
+      - Misc
+      summary: Enable Futures for Sub Account
+      operationId: EnableFuturesforSubAccount
+      parameters:
+      - name: subAccountId
+        in: query
+        required: true
+        style: form
+        explode: true
+        schema:
+          type: string
+      - name: futures
+        in: query
+        description: only true for now
+        required: true
+        style: form
+        explode: true
+        schema:
+          type: string
+      - name: timestamp
+        in: query
+        required: true
+        style: form
+        explode: true
+        schema:
+          type: string
+          example: "{{timestamp}}"
+      - name: signature
+        in: query
+        required: true
+        style: form
+        explode: true
+        schema:
+          type: string
+          example: "{{signature}}"
+      - name: Content-Type
+        in: header
+        required: true
+        style: simple
+        explode: false
+        schema:
+          type: string
+          example: application/json
+      - name: X-MBX-APIKEY
+        in: header
+        required: true
+        style: simple
+        explode: false
+        schema:
+          type: string
+          example: "{{binance-api-key}}"
+      responses:
+        "200": {}
+      deprecated: false
+  /subAccountApi:
+    get:
+      tags:
+      - Misc
+      summary: Query Sub Account Api Key
+      operationId: QuerySubAccountApiKey
+      parameters:
+      - name: subAccountId
+        in: query
+        required: true
+        style: form
+        explode: true
+        schema:
+          type: string
+      - name: timestamp
+        in: query
+        required: true
+        style: form
+        explode: true
+        schema:
+          type: string
+          example: "{{timestamp}}"
+      - name: signature
+        in: query
+        required: true
+        style: form
+        explode: true
+        schema:
+          type: string
+          example: "{{signature}}"
+      - name: Content-Type
+        in: header
+        required: true
+        style: simple
+        explode: false
+        schema:
+          type: string
+          example: application/json
+      - name: X-MBX-APIKEY
+        in: header
+        required: true
+        style: simple
+        explode: false
+        schema:
+          type: string
+          example: "{{binance-api-key}}"
+      responses:
+        "200": {}
+      deprecated: false
+    post:
+      tags:
+      - Misc
+      summary: Create Api Key for Sub Account
+      operationId: CreateApiKeyforSubAccount
+      parameters:
+      - name: subAccountId
+        in: query
+        required: true
+        style: form
+        explode: true
+        schema:
+          type: string
+      - name: canTrade
+        in: query
+        required: true
+        style: form
+        explode: true
+        schema:
+          type: string
+      - name: timestamp
+        in: query
+        required: true
+        style: form
+        explode: true
+        schema:
+          type: string
+          example: "{{timestamp}}"
+      - name: signature
+        in: query
+        required: true
+        style: form
+        explode: true
+        schema:
+          type: string
+          example: "{{signature}}"
+      - name: Content-Type
+        in: header
+        required: true
+        style: simple
+        explode: false
+        schema:
+          type: string
+          example: application/json
+      - name: X-MBX-APIKEY
+        in: header
+        required: true
+        style: simple
+        explode: false
+        schema:
+          type: string
+          example: "{{binance-api-key}}"
+      responses:
+        "200": {}
+      deprecated: false
+    delete:
+      tags:
+      - Misc
+      summary: Delete Sub Account Api Key
+      operationId: DeleteSubAccountApiKey
+      parameters:
+      - name: subAccountId
+        in: query
+        required: true
+        style: form
+        explode: true
+        schema:
+          type: string
+      - name: subAccountApiKey
+        in: query
+        required: true
+        style: form
+        explode: true
+        schema:
+          type: string
+      - name: timestamp
+        in: query
+        required: true
+        style: form
+        explode: true
+        schema:
+          type: string
+          example: "{{timestamp}}"
+      - name: signature
+        in: query
+        required: true
+        style: form
+        explode: true
+        schema:
+          type: string
+          example: "{{signature}}"
+      - name: Content-Type
+        in: header
+        required: true
+        style: simple
+        explode: false
+        schema:
+          type: string
+          example: application/json
+      - name: X-MBX-APIKEY
+        in: header
+        required: true
+        style: simple
+        explode: false
+        schema:
+          type: string
+          example: "{{binance-api-key}}"
+      responses:
+        "200": {}
+      deprecated: false
+  /subAccountApi/commission:
+    post:
+      tags:
+      - Misc
+      summary: Change Sub Account Commission
+      operationId: ChangeSubAccountCommission
+      parameters:
+      - name: subAccountId
+        in: query
+        required: true
+        style: form
+        explode: true
+        schema:
+          type: string
+      - name: makerCommission
+        in: query
+        required: true
+        style: form
+        explode: true
+        schema:
+          type: string
+      - name: takerCommission
+        in: query
+        required: true
+        style: form
+        explode: true
+        schema:
+          type: string
+      - name: timestamp
+        in: query
+        required: true
+        style: form
+        explode: true
+        schema:
+          type: string
+          example: "{{timestamp}}"
+      - name: signature
+        in: query
+        required: true
+        style: form
+        explode: true
+        schema:
+          type: string
+          example: "{{signature}}"
+      - name: Content-Type
+        in: header
+        required: true
+        style: simple
+        explode: false
+        schema:
+          type: string
+          example: application/json
+      - name: X-MBX-APIKEY
+        in: header
+        required: true
+        style: simple
+        explode: false
+        schema:
+          type: string
+          example: "{{binance-api-key}}"
+      responses:
+        "200": {}
+      deprecated: false
+  /subAccountApi/commission/futures:
+    get:
+      tags:
+      - Misc
+      summary: Query Sub Account Futures Commission Adjustment
+      operationId: QuerySubAccountFuturesCommissionAdjustment
+      parameters:
+      - name: subAccountId
+        in: query
+        required: true
+        style: form
+        explode: true
+        schema:
+          type: string
+      - name: timestamp
+        in: query
+        required: true
+        style: form
+        explode: true
+        schema:
+          type: string
+          example: "{{timestamp}}"
+      - name: signature
+        in: query
+        required: true
+        style: form
+        explode: true
+        schema:
+          type: string
+          example: "{{signature}}"
+      - name: Content-Type
+        in: header
+        required: true
+        style: simple
+        explode: false
+        schema:
+          type: string
+          example: application/json
+      - name: X-MBX-APIKEY
+        in: header
+        required: true
+        style: simple
+        explode: false
+        schema:
+          type: string
+          example: "{{binance-api-key}}"
+      responses:
+        "200": {}
+      deprecated: false
+    post:
+      tags:
+      - Misc
+      summary: Change Sub Account Futures Commission Adjustment
+      operationId: ChangeSubAccountFuturesCommissionAdjustment
+      parameters:
+      - name: subAccountId
+        in: query
+        required: true
+        style: form
+        explode: true
+        schema:
+          type: string
+      - name: symbol
+        in: query
+        required: true
+        style: form
+        explode: true
+        schema:
+          type: string
+      - name: makerAdjustment
+        in: query
+        required: true
+        style: form
+        explode: true
+        schema:
+          type: string
+      - name: takerAdjustment
+        in: query
+        required: true
+        style: form
+        explode: true
+        schema:
+          type: string
+      - name: timestamp
+        in: query
+        required: true
+        style: form
+        explode: true
+        schema:
+          type: string
+          example: "{{timestamp}}"
+      - name: signature
+        in: query
+        required: true
+        style: form
+        explode: true
+        schema:
+          type: string
+          example: "{{signature}}"
+      - name: Content-Type
+        in: header
+        required: true
+        style: simple
+        explode: false
+        schema:
+          type: string
+          example: application/json
+      - name: X-MBX-APIKEY
+        in: header
+        required: true
+        style: simple
+        explode: false
+        schema:
+          type: string
+          example: "{{binance-api-key}}"
+      responses:
+        "200": {}
+      deprecated: false
+  /info:
+    get:
+      tags:
+      - Misc
+      summary: Broker Account Information
+      operationId: BrokerAccountInformation
+      parameters:
+      - name: timestamp
+        in: query
+        required: true
+        style: form
+        explode: true
+        schema:
+          type: string
+          example: "{{timestamp}}"
+      - name: signature
+        in: query
+        required: true
+        style: form
+        explode: true
+        schema:
+          type: string
+          example: "{{signature}}"
+      - name: Content-Type
+        in: header
+        required: true
+        style: simple
+        explode: false
+        schema:
+          type: string
+          example: application/json
+      - name: X-MBX-APIKEY
+        in: header
+        required: true
+        style: simple
+        explode: false
+        schema:
+          type: string
+          example: "{{binance-api-key}}"
+      responses:
+        "200": {}
+      deprecated: false
+  /transfer:
+    get:
+      tags:
+      - Misc
+      summary: Query Sub Account Transfer History
+      operationId: QuerySubAccountTransferHistory
+      parameters:
+      - name: timestamp
+        in: query
+        required: true
+        style: form
+        explode: true
+        schema:
+          type: string
+          example: "{{timestamp}}"
+      - name: signature
+        in: query
+        required: true
+        style: form
+        explode: true
+        schema:
+          type: string
+          example: "{{signature}}"
+      - name: Content-Type
+        in: header
+        required: true
+        style: simple
+        explode: false
+        schema:
+          type: string
+          example: application/json
+      - name: X-MBX-APIKEY
+        in: header
+        required: true
+        style: simple
+        explode: false
+        schema:
+          type: string
+          example: "{{binance-api-key}}"
+      responses:
+        "200": {}
+      deprecated: false
+    post:
+      tags:
+      - Misc
+      summary: Sub Account Transfer
+      operationId: SubAccountTransfer
+      parameters:
+      - name: asset
+        in: query
+        required: true
+        style: form
+        explode: true
+        schema:
+          type: string
+      - name: amount
+        in: query
+        required: true
+        style: form
+        explode: true
+        schema:
+          type: string
+      - name: timestamp
+        in: query
+        required: true
+        style: form
+        explode: true
+        schema:
+          type: string
+          example: "{{timestamp}}"
+      - name: signature
+        in: query
+        required: true
+        style: form
+        explode: true
+        schema:
+          type: string
+          example: "{{signature}}"
+      - name: Content-Type
+        in: header
+        required: true
+        style: simple
+        explode: false
+        schema:
+          type: string
+          example: application/json
+      - name: X-MBX-APIKEY
+        in: header
+        required: true
+        style: simple
+        explode: false
+        schema:
+          type: string
+          example: "{{binance-api-key}}"
+      responses:
+        "200": {}
+      deprecated: false
+  /rebate/recentRecord:
+    get:
+      tags:
+      - Misc
+      summary: Query Broker Commission Rebate Recent Record
+      operationId: QueryBrokerCommissionRebateRecentRecord
+      parameters:
+      - name: subAccountId
+        in: query
+        required: true
+        style: form
+        explode: true
+        schema:
+          type: string
+      - name: startTime
+        in: query
+        required: true
+        style: form
+        explode: true
+        schema:
+          type: string
+      - name: endTime
+        in: query
+        required: true
+        style: form
+        explode: true
+        schema:
+          type: string
+      - name: page
+        in: query
+        description: default 1
+        required: true
+        style: form
+        explode: true
+        schema:
+          type: string
+      - name: size
+        in: query
+        description: "default 500, max 500"
+        required: true
+        style: form
+        explode: true
+        schema:
+          type: string
+      - name: timestamp
+        in: query
+        required: true
+        style: form
+        explode: true
+        schema:
+          type: string
+          example: "{{timestamp}}"
+      - name: signature
+        in: query
+        required: true
+        style: form
+        explode: true
+        schema:
+          type: string
+          example: "{{signature}}"
+      - name: Content-Type
+        in: header
+        required: true
+        style: simple
+        explode: false
+        schema:
+          type: string
+          example: application/json
+      - name: X-MBX-APIKEY
+        in: header
+        required: true
+        style: simple
+        explode: false
+        schema:
+          type: string
+          example: "{{binance-api-key}}"
+      responses:
+        "200": {}
+      deprecated: false
+  /rebate/historicalRecord:
+    get:
+      tags:
+      - Misc
+      summary: Query Broker Commission Rebate History
+      operationId: QueryBrokerCommissionRebateHistory
+      parameters:
+      - name: timestamp
+        in: query
+        required: true
+        style: form
+        explode: true
+        schema:
+          type: string
+          example: "{{timestamp}}"
+      - name: signature
+        in: query
+        required: true
+        style: form
+        explode: true
+        schema:
+          type: string
+          example: "{{signature}}"
+      - name: Content-Type
+        in: header
+        required: true
+        style: simple
+        explode: false
+        schema:
+          type: string
+          example: application/json
+      - name: X-MBX-APIKEY
+        in: header
+        required: true
+        style: simple
+        explode: false
+        schema:
+          type: string
+          example: "{{binance-api-key}}"
+      responses:
+        "200": {}
+      deprecated: false
+    post:
+      tags:
+      - Misc
+      summary: Generate Broker Commission Rebate History
+      operationId: GenerateBrokerCommissionRebateHistory
+      parameters:
+      - name: timestamp
+        in: query
+        required: true
+        style: form
+        explode: true
+        schema:
+          type: string
+          example: "{{timestamp}}"
+      - name: signature
+        in: query
+        required: true
+        style: form
+        explode: true
+        schema:
+          type: string
+          example: "{{signature}}"
+      - name: Content-Type
+        in: header
+        required: true
+        style: simple
+        explode: false
+        schema:
+          type: string
+          example: application/json
+      - name: X-MBX-APIKEY
+        in: header
+        required: true
+        style: simple
+        explode: false
+        schema:
+          type: string
+          example: "{{binance-api-key}}"
+      responses:
+        "200": {}
+      deprecated: false
+  /subAccount/bnbBurn/spot:
+    post:
+      tags:
+      - Misc
+      summary: Enable Or Disable BNB Burn for Sub Account SPOT and MARGIN
+      operationId: EnableOrDisableBNBBurnforSubAccountSPOTandMARGIN
+      parameters:
+      - name: subAccountId
+        in: query
+        required: true
+        style: form
+        explode: true
+        schema:
+          type: string
+      - name: spotBNBBurn
+        in: query
+        required: true
+        style: form
+        explode: true
+        schema:
+          type: string
+      - name: timestamp
+        in: query
+        required: true
+        style: form
+        explode: true
+        schema:
+          type: string
+          example: "{{timestamp}}"
+      - name: signature
+        in: query
+        required: true
+        style: form
+        explode: true
+        schema:
+          type: string
+          example: "{{signature}}"
+      - name: Content-Type
+        in: header
+        required: true
+        style: simple
+        explode: false
+        schema:
+          type: string
+          example: application/json
+      - name: X-MBX-APIKEY
+        in: header
+        required: true
+        style: simple
+        explode: false
+        schema:
+          type: string
+          example: "{{binance-api-key}}"
+      responses:
+        "200": {}
+      deprecated: false
+  /subAccount/bnbBurn/marginInterest:
+    post:
+      tags:
+      - Misc
+      summary: Enable Or Disable BNB Burn for Sub Account Margin Interest
+      operationId: EnableOrDisableBNBBurnforSubAccountMarginInterest
+      parameters:
+      - name: subAccountId
+        in: query
+        required: true
+        style: form
+        explode: true
+        schema:
+          type: string
+      - name: spotBNBBurn
+        in: query
+        required: true
+        style: form
+        explode: true
+        schema:
+          type: string
+      - name: timestamp
+        in: query
+        required: true
+        style: form
+        explode: true
+        schema:
+          type: string
+          example: "{{timestamp}}"
+      - name: signature
+        in: query
+        required: true
+        style: form
+        explode: true
+        schema:
+          type: string
+          example: "{{signature}}"
+      - name: Content-Type
+        in: header
+        required: true
+        style: simple
+        explode: false
+        schema:
+          type: string
+          example: application/json
+      - name: X-MBX-APIKEY
+        in: header
+        required: true
+        style: simple
+        explode: false
+        schema:
+          type: string
+          example: "{{binance-api-key}}"
+      responses:
+        "200": {}
+      deprecated: false
+  /subAccount/bnbBurn/status:
+    get:
+      tags:
+      - Misc
+      summary: Get BNB Burn Status for Sub Account
+      operationId: GetBNBBurnStatusforSubAccount
+      parameters:
+      - name: subAccountId
+        in: query
+        required: true
+        style: form
+        explode: true
+        schema:
+          type: string
+      - name: timestamp
+        in: query
+        required: true
+        style: form
+        explode: true
+        schema:
+          type: string
+          example: "{{timestamp}}"
+      - name: signature
+        in: query
+        required: true
+        style: form
+        explode: true
+        schema:
+          type: string
+          example: "{{signature}}"
+      - name: Content-Type
+        in: header
+        required: true
+        style: simple
+        explode: false
+        schema:
+          type: string
+          example: application/json
+      - name: X-MBX-APIKEY
+        in: header
+        required: true
+        style: simple
+        explode: false
+        schema:
+          type: string
+          example: "{{binance-api-key}}"
+      responses:
+        "200": {}
+      deprecated: false
+  /subAccount/depositHist:
+    get:
+      tags:
+      - Misc
+      summary: Get Sub Account Deposit History
+      operationId: GetSubAccountDepositHistory
+      parameters:
+      - name: timestamp
+        in: query
+        required: true
+        style: form
+        explode: true
+        schema:
+          type: string
+          example: "{{timestamp}}"
+      - name: signature
+        in: query
+        required: true
+        style: form
+        explode: true
+        schema:
+          type: string
+          example: "{{signature}}"
+      - name: Content-Type
+        in: header
+        required: true
+        style: simple
+        explode: false
+        schema:
+          type: string
+          example: application/json
+      - name: X-MBX-APIKEY
+        in: header
+        required: true
+        style: simple
+        explode: false
+        schema:
+          type: string
+          example: "{{binance-api-key}}"
+      responses:
+        "200": {}
+      deprecated: false
+  /subAccount/spotSummary:
+    get:
+      tags:
+      - Misc
+      summary: Query Sub Account Spot Asset info
+      operationId: QuerySubAccountSpotAssetinfo
+      parameters:
+      - name: timestamp
+        in: query
+        required: true
+        style: form
+        explode: true
+        schema:
+          type: string
+          example: "{{timestamp}}"
+      - name: signature
+        in: query
+        required: true
+        style: form
+        explode: true
+        schema:
+          type: string
+          example: "{{signature}}"
+      - name: Content-Type
+        in: header
+        required: true
+        style: simple
+        explode: false
+        schema:
+          type: string
+          example: application/json
+      - name: X-MBX-APIKEY
+        in: header
+        required: true
+        style: simple
+        explode: false
+        schema:
+          type: string
+          example: "{{binance-api-key}}"
+      responses:
+        "200": {}
+      deprecated: false
+  /subAccount/marginSummary:
+    get:
+      tags:
+      - Misc
+      summary: Query Subaccount Margin Asset info
+      operationId: QuerySubaccountMarginAssetinfo
+      parameters:
+      - name: timestamp
+        in: query
+        required: true
+        style: form
+        explode: true
+        schema:
+          type: string
+          example: "{{timestamp}}"
+      - name: signature
+        in: query
+        required: true
+        style: form
+        explode: true
+        schema:
+          type: string
+          example: "{{signature}}"
+      - name: Content-Type
+        in: header
+        required: true
+        style: simple
+        explode: false
+        schema:
+          type: string
+          example: application/json
+      - name: X-MBX-APIKEY
+        in: header
+        required: true
+        style: simple
+        explode: false
+        schema:
+          type: string
+          example: "{{binance-api-key}}"
+      responses:
+        "200": {}
+      deprecated: false
+  /subAccount/futuresSummary:
+    get:
+      tags:
+      - Misc
+      summary: Query Subaccount Futures Asset info
+      operationId: QuerySubaccountFuturesAssetinfo
+      parameters:
+      - name: timestamp
+        in: query
+        required: true
+        style: form
+        explode: true
+        schema:
+          type: string
+          example: "{{timestamp}}"
+      - name: signature
+        in: query
+        required: true
+        style: form
+        explode: true
+        schema:
+          type: string
+          example: "{{signature}}"
+      - name: Content-Type
+        in: header
+        required: true
+        style: simple
+        explode: false
+        schema:
+          type: string
+          example: application/json
+      - name: X-MBX-APIKEY
+        in: header
+        required: true
+        style: simple
+        explode: false
+        schema:
+          type: string
+          example: "{{binance-api-key}}"
+      responses:
+        "200": {}
+      deprecated: false
+components: {}

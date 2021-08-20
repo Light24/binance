@@ -1,0 +1,2248 @@
+openapi: 3.0.0
+info:
+  title: Binance perpetual future API
+  description: "Binance official supported Postman collections.<br/>\n- API documents:\
+    \ https://binance-docs.github.io/apidocs/futures/en/\n- Telegram: https://t.me/binance_api_english\n\
+    - Open Issue at: https://github.com/binance-exchange/binance-api-postman"
+  contact: {}
+  version: "1.0"
+servers:
+- url: http://example.com
+tags:
+- name: Market
+- name: Account
+- name: Order
+- name: Trade
+- name: Data Stream
+paths:
+  /fapi/v1/ping:
+    get:
+      tags:
+      - Market
+      summary: Test Connectivity
+      description: Test connectivity to the Rest API.
+      operationId: TestConnectivity
+      parameters:
+      - name: Content-Type
+        in: header
+        required: true
+        style: simple
+        explode: false
+        schema:
+          type: string
+          example: application/json
+      responses:
+        "200": {}
+      deprecated: false
+  /fapi/v1/time:
+    get:
+      tags:
+      - Market
+      summary: Check Server Time
+      operationId: CheckServerTime
+      parameters:
+      - name: Content-Type
+        in: header
+        required: true
+        style: simple
+        explode: false
+        schema:
+          type: string
+          example: application/json
+      responses:
+        "200": {}
+      deprecated: false
+  /fapi/v1/exchangeInfo:
+    get:
+      tags:
+      - Market
+      summary: Exchange Information (MARKET_DATA)
+      operationId: ExchangeInformation(MARKET_DATA)
+      parameters:
+      - name: Content-Type
+        in: header
+        required: true
+        style: simple
+        explode: false
+        schema:
+          type: string
+          example: application/json
+      responses:
+        "200": {}
+      deprecated: false
+  /fapi/v1/depth:
+    get:
+      tags:
+      - Market
+      summary: Order Book (MARKET_DATA)
+      operationId: OrderBook(MARKET_DATA)
+      parameters:
+      - name: symbol
+        in: query
+        required: true
+        style: form
+        explode: true
+        schema:
+          type: string
+          example: BTCUSDT
+      - name: Content-Type
+        in: header
+        required: true
+        style: simple
+        explode: false
+        schema:
+          type: string
+          example: application/json
+      responses:
+        "200": {}
+      deprecated: false
+  /fapi/v1/trades:
+    get:
+      tags:
+      - Market
+      summary: Recent Trades List (MARKET_DATA)
+      operationId: RecentTradesList(MARKET_DATA)
+      parameters:
+      - name: symbol
+        in: query
+        required: true
+        style: form
+        explode: true
+        schema:
+          type: string
+          example: BTCUSDT
+      - name: Content-Type
+        in: header
+        required: true
+        style: simple
+        explode: false
+        schema:
+          type: string
+          example: application/json
+      responses:
+        "200": {}
+      deprecated: false
+  /fapi/v1/historicalTrades:
+    get:
+      tags:
+      - Market
+      summary: Old Trades Lookup (MARKET_DATA)
+      description: "This endpoint need your API key only, not the secret key."
+      operationId: OldTradesLookup(MARKET_DATA)
+      parameters:
+      - name: symbol
+        in: query
+        required: true
+        style: form
+        explode: true
+        schema:
+          type: string
+          example: BTCUSDT
+      - name: Content-Type
+        in: header
+        required: true
+        style: simple
+        explode: false
+        schema:
+          type: string
+          example: application/json
+      - name: X-MBX-APIKEY
+        in: header
+        required: true
+        style: simple
+        explode: false
+        schema:
+          type: string
+          example: "{{binance-api-key}}"
+      responses:
+        "200": {}
+      deprecated: false
+  /fapi/v1/aggTrades:
+    get:
+      tags:
+      - Market
+      summary: Compressed/Aggregate Trades List (MARKET_DATA)
+      operationId: Compressed/AggregateTradesList(MARKET_DATA)
+      parameters:
+      - name: symbol
+        in: query
+        required: true
+        style: form
+        explode: true
+        schema:
+          type: string
+          example: BTCUSDT
+      - name: Content-Type
+        in: header
+        required: true
+        style: simple
+        explode: false
+        schema:
+          type: string
+          example: application/json
+      responses:
+        "200": {}
+      deprecated: false
+  /fapi/v1/klines:
+    get:
+      tags:
+      - Market
+      summary: Kline/Candlestick Data (MARKET_DATA)
+      description: Kline/candlestick bars for a symbol. Klines are uniquely identified
+        by their open time.
+      operationId: Kline/CandlestickData(MARKET_DATA)
+      parameters:
+      - name: symbol
+        in: query
+        required: true
+        style: form
+        explode: true
+        schema:
+          type: string
+          example: BTCUSDT
+      - name: interval
+        in: query
+        description: "1m, 1h, 1d"
+        required: true
+        style: form
+        explode: true
+        schema:
+          type: string
+          example: 1h
+      - name: Content-Type
+        in: header
+        required: true
+        style: simple
+        explode: false
+        schema:
+          type: string
+          example: application/json
+      responses:
+        "200": {}
+      deprecated: false
+  /fapi/v1/continuousKlines:
+    get:
+      tags:
+      - Market
+      summary: Continuous Contract Kline/Candlestick Data
+      description: Kline/candlestick bars for a symbol. Klines are uniquely identified
+        by their open time.
+      operationId: ContinuousContractKline/CandlestickData
+      parameters:
+      - name: pair
+        in: query
+        required: true
+        style: form
+        explode: true
+        schema:
+          type: string
+      - name: contractType
+        in: query
+        required: true
+        style: form
+        explode: true
+        schema:
+          type: string
+      - name: interval
+        in: query
+        required: true
+        style: form
+        explode: true
+        schema:
+          type: string
+      - name: Content-Type
+        in: header
+        required: true
+        style: simple
+        explode: false
+        schema:
+          type: string
+          example: application/json
+      responses:
+        "200": {}
+      deprecated: false
+  /fapi/v1/indexPriceKlines:
+    get:
+      tags:
+      - Market
+      summary: Index Price Kline/Candlestick Data
+      description: Kline/candlestick bars for the index price of a pair. Klines are
+        uniquely identified by their open time.
+      operationId: IndexPriceKline/CandlestickData
+      parameters:
+      - name: pair
+        in: query
+        required: true
+        style: form
+        explode: true
+        schema:
+          type: string
+          example: BTCUSDT
+      - name: interval
+        in: query
+        description: "1m, 1h, 1d"
+        required: true
+        style: form
+        explode: true
+        schema:
+          type: string
+          example: 1h
+      - name: Content-Type
+        in: header
+        required: true
+        style: simple
+        explode: false
+        schema:
+          type: string
+          example: application/json
+      responses:
+        "200": {}
+      deprecated: false
+  /fapi/v1/markPriceKlines:
+    get:
+      tags:
+      - Market
+      summary: Mark Price Kline/Candlestick Data
+      description: Kline/candlestick bars for the mark price of a symbol. Klines are
+        uniquely identified by their open time.
+      operationId: MarkPriceKline/CandlestickData
+      parameters:
+      - name: symbol
+        in: query
+        required: true
+        style: form
+        explode: true
+        schema:
+          type: string
+          example: BTCUSDT
+      - name: interval
+        in: query
+        description: "1m, 1h, 1d"
+        required: true
+        style: form
+        explode: true
+        schema:
+          type: string
+          example: 1h
+      - name: Content-Type
+        in: header
+        required: true
+        style: simple
+        explode: false
+        schema:
+          type: string
+          example: application/json
+      responses:
+        "200": {}
+      deprecated: false
+  /fapi/v1/premiumIndex:
+    get:
+      tags:
+      - Market
+      summary: Mark Price (MARKET_DATA)
+      description: "Mark Price and Funding Rate\n\nWeight: 1"
+      operationId: MarkPrice(MARKET_DATA)
+      parameters:
+      - name: Content-Type
+        in: header
+        required: true
+        style: simple
+        explode: false
+        schema:
+          type: string
+          example: application/json
+      responses:
+        "200": {}
+      deprecated: false
+  /fapi/v1/fundingRate:
+    get:
+      tags:
+      - Market
+      summary: Get Funding Rate History (MARKET_DATA)
+      description: "Mark Price and Funding Rate\n\nWeight: 1"
+      operationId: GetFundingRateHistory(MARKET_DATA)
+      parameters:
+      - name: Content-Type
+        in: header
+        required: true
+        style: simple
+        explode: false
+        schema:
+          type: string
+          example: application/json
+      responses:
+        "200": {}
+      deprecated: false
+  /fapi/v1/ticker/24hr:
+    get:
+      tags:
+      - Market
+      summary: 24hr Ticker Price Change Statistics (MARKET_DATA)
+      description: |-
+        24 hour rolling window price change statistics.
+
+        Careful when accessing this with no symbol.
+
+        Weight:
+
+        1 for a single symbol;
+
+        40 when the symbol parameter is omitted
+      operationId: 24hrTickerPriceChangeStatistics(MARKET_DATA)
+      parameters:
+      - name: Content-Type
+        in: header
+        required: true
+        style: simple
+        explode: false
+        schema:
+          type: string
+          example: application/json
+      responses:
+        "200": {}
+      deprecated: false
+  /fapi/v1/ticker/bookTicker:
+    get:
+      tags:
+      - Market
+      summary: Symbol Order Book Ticker (MARKET_DATA)
+      description: Best price/qty on the order book for a symbol or symbols.
+      operationId: SymbolOrderBookTicker(MARKET_DATA)
+      parameters:
+      - name: Content-Type
+        in: header
+        required: true
+        style: simple
+        explode: false
+        schema:
+          type: string
+          example: application/json
+      responses:
+        "200": {}
+      deprecated: false
+  /fapi/v1/allForceOrders:
+    get:
+      tags:
+      - Market
+      summary: Get all Liquidation Orders (MARKET_DATA)
+      operationId: GetallLiquidationOrders(MARKET_DATA)
+      parameters:
+      - name: symbol
+        in: query
+        required: true
+        style: form
+        explode: true
+        schema:
+          type: string
+      - name: startTime
+        in: query
+        required: true
+        style: form
+        explode: true
+        schema:
+          type: string
+      - name: endTime
+        in: query
+        required: true
+        style: form
+        explode: true
+        schema:
+          type: string
+      - name: limit
+        in: query
+        description: Default:100 Max:1000
+        required: true
+        style: form
+        explode: true
+        schema:
+          type: integer
+          format: int32
+          example: 100
+      - name: Content-Type
+        in: header
+        required: true
+        style: simple
+        explode: false
+        schema:
+          type: string
+          example: application/json
+      responses:
+        "200": {}
+      deprecated: false
+  /fapi/v1/openInterest:
+    get:
+      tags:
+      - Market
+      summary: Open Interest (MARKET_DATA)
+      description: Get present open interest of a specific symbol.
+      operationId: OpenInterest(MARKET_DATA)
+      parameters:
+      - name: symbol
+        in: query
+        required: true
+        style: form
+        explode: true
+        schema:
+          type: string
+          example: BTCUSDT
+      - name: Content-Type
+        in: header
+        required: true
+        style: simple
+        explode: false
+        schema:
+          type: string
+          example: application/json
+      responses:
+        "200": {}
+      deprecated: false
+  /futures/data/openInterestHist:
+    get:
+      tags:
+      - Market
+      summary: Open Interest Statistics (MARKET_DATA)
+      description: Get present open interest of a specific symbol.
+      operationId: OpenInterestStatistics(MARKET_DATA)
+      parameters:
+      - name: symbol
+        in: query
+        required: true
+        style: form
+        explode: true
+        schema:
+          type: string
+          example: BTCUSDT
+      - name: period
+        in: query
+        description: "\"5m\",\"15m\",\"30m\",\"1h\",\"2h\",\"4h\",\"6h\",\"12h\",\"\
+          1d\""
+        required: true
+        style: form
+        explode: true
+        schema:
+          type: string
+      - name: Content-Type
+        in: header
+        required: true
+        style: simple
+        explode: false
+        schema:
+          type: string
+          example: application/json
+      - name: X-MBX-APIKEY
+        in: header
+        required: true
+        style: simple
+        explode: false
+        schema:
+          type: string
+          example: "{{binance-api-key}}"
+      responses:
+        "200": {}
+      deprecated: false
+  /futures/data/topLongShortAccountRatio:
+    get:
+      tags:
+      - Market
+      summary: Top Trader Long/Short Ratio (Accounts) (MARKET_DATA)
+      description: Get present open interest of a specific symbol.
+      operationId: TopTraderLong/ShortRatio(Accounts)(MARKET_DATA)
+      parameters:
+      - name: symbol
+        in: query
+        required: true
+        style: form
+        explode: true
+        schema:
+          type: string
+          example: BTCUSDT
+      - name: period
+        in: query
+        description: "\"5m\",\"15m\",\"30m\",\"1h\",\"2h\",\"4h\",\"6h\",\"12h\",\"\
+          1d\""
+        required: true
+        style: form
+        explode: true
+        schema:
+          type: string
+      - name: Content-Type
+        in: header
+        required: true
+        style: simple
+        explode: false
+        schema:
+          type: string
+          example: application/json
+      - name: X-MBX-APIKEY
+        in: header
+        required: true
+        style: simple
+        explode: false
+        schema:
+          type: string
+          example: "{{binance-api-key}}"
+      responses:
+        "200": {}
+      deprecated: false
+  /futures/data/topLongShortPositionRatio:
+    get:
+      tags:
+      - Market
+      summary: Top Trader Long/Short Ratio (Positions) (MARKET_DATA)
+      description: Get present open interest of a specific symbol.
+      operationId: TopTraderLong/ShortRatio(Positions)(MARKET_DATA)
+      parameters:
+      - name: symbol
+        in: query
+        required: true
+        style: form
+        explode: true
+        schema:
+          type: string
+          example: BTCUSDT
+      - name: period
+        in: query
+        description: "\"5m\",\"15m\",\"30m\",\"1h\",\"2h\",\"4h\",\"6h\",\"12h\",\"\
+          1d\""
+        required: true
+        style: form
+        explode: true
+        schema:
+          type: string
+      - name: Content-Type
+        in: header
+        required: true
+        style: simple
+        explode: false
+        schema:
+          type: string
+          example: application/json
+      - name: X-MBX-APIKEY
+        in: header
+        required: true
+        style: simple
+        explode: false
+        schema:
+          type: string
+          example: "{{binance-api-key}}"
+      responses:
+        "200": {}
+      deprecated: false
+  /futures/data/globalLongShortAccountRatio:
+    get:
+      tags:
+      - Market
+      summary: Long/Short Ratio (MARKET_DATA)
+      description: Get present open interest of a specific symbol.
+      operationId: Long/ShortRatio(MARKET_DATA)
+      parameters:
+      - name: symbol
+        in: query
+        required: true
+        style: form
+        explode: true
+        schema:
+          type: string
+          example: BTCUSDT
+      - name: period
+        in: query
+        description: "\"5m\",\"15m\",\"30m\",\"1h\",\"2h\",\"4h\",\"6h\",\"12h\",\"\
+          1d\""
+        required: true
+        style: form
+        explode: true
+        schema:
+          type: string
+      - name: Content-Type
+        in: header
+        required: true
+        style: simple
+        explode: false
+        schema:
+          type: string
+          example: application/json
+      - name: X-MBX-APIKEY
+        in: header
+        required: true
+        style: simple
+        explode: false
+        schema:
+          type: string
+          example: "{{binance-api-key}}"
+      responses:
+        "200": {}
+      deprecated: false
+  /futures/data/takerlongshortRatio:
+    get:
+      tags:
+      - Market
+      summary: Taker Buy/Sell Volume (MARKET_DATA)
+      operationId: TakerBuy/SellVolume(MARKET_DATA)
+      parameters:
+      - name: symbol
+        in: query
+        required: true
+        style: form
+        explode: true
+        schema:
+          type: string
+          example: BTCUSDT
+      - name: period
+        in: query
+        description: "\"5m\",\"15m\",\"30m\",\"1h\",\"2h\",\"4h\",\"6h\",\"12h\",\"\
+          1d\""
+        required: true
+        style: form
+        explode: true
+        schema:
+          type: string
+          example: 5m
+      - name: Content-Type
+        in: header
+        required: true
+        style: simple
+        explode: false
+        schema:
+          type: string
+          example: application/json
+      - name: X-MBX-APIKEY
+        in: header
+        required: true
+        style: simple
+        explode: false
+        schema:
+          type: string
+          example: "{{binance-api-key}}"
+      responses:
+        "200": {}
+      deprecated: false
+  /fapi/v1/lvtKlines:
+    get:
+      tags:
+      - Market
+      summary: Historical BLVT NAV Kline/Candlestick
+      operationId: HistoricalBLVTNAVKline/Candlestick
+      parameters:
+      - name: symbol
+        in: query
+        description: token name
+        required: true
+        style: form
+        explode: true
+        schema:
+          type: string
+      - name: interval
+        in: query
+        required: true
+        style: form
+        explode: true
+        schema:
+          type: string
+      - name: Content-Type
+        in: header
+        required: true
+        style: simple
+        explode: false
+        schema:
+          type: string
+          example: application/json
+      - name: X-MBX-APIKEY
+        in: header
+        required: true
+        style: simple
+        explode: false
+        schema:
+          type: string
+          example: "{{binance-api-key}}"
+      responses:
+        "200": {}
+      deprecated: false
+  /fapi/v1/indexInfo:
+    get:
+      tags:
+      - Market
+      summary: Composite Index Symbol Information
+      operationId: CompositeIndexSymbolInformation
+      parameters:
+      - name: Content-Type
+        in: header
+        required: true
+        style: simple
+        explode: false
+        schema:
+          type: string
+          example: application/json
+      - name: X-MBX-APIKEY
+        in: header
+        required: true
+        style: simple
+        explode: false
+        schema:
+          type: string
+          example: "{{binance-api-key}}"
+      responses:
+        "200": {}
+      deprecated: false
+  /fapi/v2/account:
+    get:
+      tags:
+      - Account
+      summary: Account information
+      operationId: Accountinformation
+      parameters:
+      - name: timestamp
+        in: query
+        required: true
+        style: form
+        explode: true
+        schema:
+          type: string
+          example: "{{timestamp}}"
+      - name: signature
+        in: query
+        required: true
+        style: form
+        explode: true
+        schema:
+          type: string
+          example: "{{signature}}"
+      - name: Content-Type
+        in: header
+        required: true
+        style: simple
+        explode: false
+        schema:
+          type: string
+          example: application/json
+      - name: X-MBX-APIKEY
+        in: header
+        required: true
+        style: simple
+        explode: false
+        schema:
+          type: string
+          example: "{{binance-api-key}}"
+      responses:
+        "200": {}
+      deprecated: false
+  /fapi/v1/income:
+    get:
+      tags:
+      - Account
+      summary: Get Income History
+      operationId: GetIncomeHistory
+      parameters:
+      - name: timestamp
+        in: query
+        required: true
+        style: form
+        explode: true
+        schema:
+          type: string
+          example: "{{timestamp}}"
+      - name: signature
+        in: query
+        required: true
+        style: form
+        explode: true
+        schema:
+          type: string
+          example: "{{signature}}"
+      - name: Content-Type
+        in: header
+        required: true
+        style: simple
+        explode: false
+        schema:
+          type: string
+          example: application/json
+      - name: X-MBX-APIKEY
+        in: header
+        required: true
+        style: simple
+        explode: false
+        schema:
+          type: string
+          example: "{{binance-api-key}}"
+      responses:
+        "200": {}
+      deprecated: false
+  /fapi/v2/positionRisk:
+    get:
+      tags:
+      - Account
+      summary: Position Information
+      operationId: PositionInformation
+      parameters:
+      - name: timestamp
+        in: query
+        required: true
+        style: form
+        explode: true
+        schema:
+          type: string
+          example: "{{timestamp}}"
+      - name: signature
+        in: query
+        required: true
+        style: form
+        explode: true
+        schema:
+          type: string
+          example: "{{signature}}"
+      - name: Content-Type
+        in: header
+        required: true
+        style: simple
+        explode: false
+        schema:
+          type: string
+          example: application/json
+      - name: X-MBX-APIKEY
+        in: header
+        required: true
+        style: simple
+        explode: false
+        schema:
+          type: string
+          example: "{{binance-api-key}}"
+      responses:
+        "200": {}
+      deprecated: false
+  /fapi/v1/userTrades:
+    get:
+      tags:
+      - Account
+      summary: Account Trade List
+      operationId: AccountTradeList
+      parameters:
+      - name: symbol
+        in: query
+        required: true
+        style: form
+        explode: true
+        schema:
+          type: string
+          example: BTCUSDT
+      - name: timestamp
+        in: query
+        required: true
+        style: form
+        explode: true
+        schema:
+          type: string
+          example: "{{timestamp}}"
+      - name: signature
+        in: query
+        required: true
+        style: form
+        explode: true
+        schema:
+          type: string
+          example: "{{signature}}"
+      - name: Content-Type
+        in: header
+        required: true
+        style: simple
+        explode: false
+        schema:
+          type: string
+          example: application/json
+      - name: X-MBX-APIKEY
+        in: header
+        required: true
+        style: simple
+        explode: false
+        schema:
+          type: string
+          example: "{{binance-api-key}}"
+      responses:
+        "200": {}
+      deprecated: false
+  /fapi/v2/balance:
+    get:
+      tags:
+      - Account
+      summary: Future Account Balance
+      operationId: FutureAccountBalance
+      parameters:
+      - name: timestamp
+        in: query
+        required: true
+        style: form
+        explode: true
+        schema:
+          type: string
+          example: "{{timestamp}}"
+      - name: signature
+        in: query
+        required: true
+        style: form
+        explode: true
+        schema:
+          type: string
+          example: "{{signature}}"
+      - name: Content-Type
+        in: header
+        required: true
+        style: simple
+        explode: false
+        schema:
+          type: string
+          example: application/json
+      - name: X-MBX-APIKEY
+        in: header
+        required: true
+        style: simple
+        explode: false
+        schema:
+          type: string
+          example: "{{binance-api-key}}"
+      responses:
+        "200": {}
+      deprecated: false
+  /fapi/v1/leverageBracket:
+    get:
+      tags:
+      - Account
+      summary: Notional and Leverage Brackets (USER_DATA)
+      description: Get present open interest of a specific symbol.
+      operationId: NotionalandLeverageBrackets(USER_DATA)
+      parameters:
+      - name: timestamp
+        in: query
+        required: true
+        style: form
+        explode: true
+        schema:
+          type: string
+          example: "{{timestamp}}"
+      - name: signature
+        in: query
+        required: true
+        style: form
+        explode: true
+        schema:
+          type: string
+          example: "{{signature}}"
+      - name: Content-Type
+        in: header
+        required: true
+        style: simple
+        explode: false
+        schema:
+          type: string
+          example: application/json
+      - name: X-MBX-APIKEY
+        in: header
+        required: true
+        style: simple
+        explode: false
+        schema:
+          type: string
+          example: "{{binance-api-key}}"
+      responses:
+        "200": {}
+      deprecated: false
+  /fapi/v1/adlQuantile:
+    get:
+      tags:
+      - Account
+      summary: Position ADL Quantile Estimation (USER_DATA)
+      operationId: PositionADLQuantileEstimation(USER_DATA)
+      parameters:
+      - name: timestamp
+        in: query
+        required: true
+        style: form
+        explode: true
+        schema:
+          type: string
+          example: "{{timestamp}}"
+      - name: signature
+        in: query
+        required: true
+        style: form
+        explode: true
+        schema:
+          type: string
+          example: "{{signature}}"
+      - name: Content-Type
+        in: header
+        required: true
+        style: simple
+        explode: false
+        schema:
+          type: string
+          example: application/json
+      - name: X-MBX-APIKEY
+        in: header
+        required: true
+        style: simple
+        explode: false
+        schema:
+          type: string
+          example: "{{binance-api-key}}"
+      responses:
+        "200": {}
+      deprecated: false
+  /fapi/v1/commissionRate:
+    get:
+      tags:
+      - Account
+      summary: User Commission Rate (USER_DATA)
+      operationId: UserCommissionRate(USER_DATA)
+      parameters:
+      - name: symbol
+        in: query
+        required: true
+        style: form
+        explode: true
+        schema:
+          type: string
+      - name: timestamp
+        in: query
+        required: true
+        style: form
+        explode: true
+        schema:
+          type: string
+          example: "{{timestamp}}"
+      - name: signature
+        in: query
+        required: true
+        style: form
+        explode: true
+        schema:
+          type: string
+          example: "{{signature}}"
+      - name: Content-Type
+        in: header
+        required: true
+        style: simple
+        explode: false
+        schema:
+          type: string
+          example: application/json
+      - name: X-MBX-APIKEY
+        in: header
+        required: true
+        style: simple
+        explode: false
+        schema:
+          type: string
+          example: "{{binance-api-key}}"
+      responses:
+        "200": {}
+      deprecated: false
+  /fapi/v1/multiAssetsMargin:
+    get:
+      tags:
+      - Account
+      summary: Get Current Multi-Assets Mode
+      operationId: GetCurrentMulti-AssetsMode
+      parameters:
+      - name: timestamp
+        in: query
+        required: true
+        style: form
+        explode: true
+        schema:
+          type: string
+          example: "{{timestamp}}"
+      - name: signature
+        in: query
+        required: true
+        style: form
+        explode: true
+        schema:
+          type: string
+          example: "{{signature}}"
+      - name: Content-Type
+        in: header
+        required: true
+        style: simple
+        explode: false
+        schema:
+          type: string
+          example: application/json
+      - name: X-MBX-APIKEY
+        in: header
+        required: true
+        style: simple
+        explode: false
+        schema:
+          type: string
+          example: "{{binance-api-key}}"
+      responses:
+        "200": {}
+      deprecated: false
+    post:
+      tags:
+      - Account
+      summary: Change Multi-Assets Mode
+      operationId: ChangeMulti-AssetsMode
+      parameters:
+      - name: multiAssetsMargin
+        in: query
+        required: true
+        style: form
+        explode: true
+        schema:
+          type: boolean
+          example: true
+      - name: timestamp
+        in: query
+        required: true
+        style: form
+        explode: true
+        schema:
+          type: string
+          example: "{{timestamp}}"
+      - name: signature
+        in: query
+        required: true
+        style: form
+        explode: true
+        schema:
+          type: string
+          example: "{{signature}}"
+      - name: Content-Type
+        in: header
+        required: true
+        style: simple
+        explode: false
+        schema:
+          type: string
+          example: application/json
+      - name: X-MBX-APIKEY
+        in: header
+        required: true
+        style: simple
+        explode: false
+        schema:
+          type: string
+          example: "{{binance-api-key}}"
+      responses:
+        "200": {}
+      deprecated: false
+  /fapi/v1/order:
+    get:
+      tags:
+      - Order
+      summary: Query Order
+      operationId: QueryOrder
+      parameters:
+      - name: symbol
+        in: query
+        required: true
+        style: form
+        explode: true
+        schema:
+          type: string
+          example: BTCUSDT
+      - name: timestamp
+        in: query
+        required: true
+        style: form
+        explode: true
+        schema:
+          type: string
+          example: "{{timestamp}}"
+      - name: signature
+        in: query
+        required: true
+        style: form
+        explode: true
+        schema:
+          type: string
+          example: "{{signature}}"
+      - name: Content-Type
+        in: header
+        required: true
+        style: simple
+        explode: false
+        schema:
+          type: string
+          example: application/json
+      - name: X-MBX-APIKEY
+        in: header
+        required: true
+        style: simple
+        explode: false
+        schema:
+          type: string
+          example: "{{binance-api-key}}"
+      responses:
+        "200": {}
+      deprecated: false
+    post:
+      tags:
+      - Order
+      summary: New Order (TRADE)
+      description: https://binance-docs.github.io/apidocs/futures/en/#new-order-trade
+      operationId: NewOrder(TRADE)
+      parameters:
+      - name: symbol
+        in: query
+        required: true
+        style: form
+        explode: true
+        schema:
+          type: string
+      - name: side
+        in: query
+        required: true
+        style: form
+        explode: true
+        schema:
+          type: string
+      - name: type
+        in: query
+        required: true
+        style: form
+        explode: true
+        schema:
+          type: string
+      - name: quantity
+        in: query
+        required: true
+        style: form
+        explode: true
+        schema:
+          type: string
+      - name: price
+        in: query
+        required: true
+        style: form
+        explode: true
+        schema:
+          type: string
+      - name: timestamp
+        in: query
+        required: true
+        style: form
+        explode: true
+        schema:
+          type: string
+          example: "{{timestamp}}"
+      - name: signature
+        in: query
+        required: true
+        style: form
+        explode: true
+        schema:
+          type: string
+          example: "{{signature}}"
+      - name: Content-Type
+        in: header
+        required: true
+        style: simple
+        explode: false
+        schema:
+          type: string
+          example: application/json
+      - name: X-MBX-APIKEY
+        in: header
+        required: true
+        style: simple
+        explode: false
+        schema:
+          type: string
+          example: "{{binance-api-key}}"
+      responses:
+        "200": {}
+      deprecated: false
+    delete:
+      tags:
+      - Order
+      summary: Cancel Order
+      operationId: CancelOrder
+      parameters:
+      - name: symbol
+        in: query
+        required: true
+        style: form
+        explode: true
+        schema:
+          type: string
+          example: BTCUSDT
+      - name: timestamp
+        in: query
+        required: true
+        style: form
+        explode: true
+        schema:
+          type: string
+          example: "{{timestamp}}"
+      - name: signature
+        in: query
+        required: true
+        style: form
+        explode: true
+        schema:
+          type: string
+          example: "{{signature}}"
+      - name: Content-Type
+        in: header
+        required: true
+        style: simple
+        explode: false
+        schema:
+          type: string
+          example: application/json
+      - name: X-MBX-APIKEY
+        in: header
+        required: true
+        style: simple
+        explode: false
+        schema:
+          type: string
+          example: "{{binance-api-key}}"
+      responses:
+        "200": {}
+      deprecated: false
+  /fapi/v1/batchOrders:
+    post:
+      tags:
+      - Order
+      summary: Place Multiple Orders (TRADE)
+      operationId: PlaceMultipleOrders(TRADE)
+      parameters:
+      - name: batchOrders
+        in: query
+        required: true
+        style: form
+        explode: true
+        schema:
+          type: string
+      - name: timestamp
+        in: query
+        required: true
+        style: form
+        explode: true
+        schema:
+          type: string
+          example: "{{timestamp}}"
+      - name: signature
+        in: query
+        description: |-
+          Default BOTH for One-way Mode ;
+          LONG or SHORT for Hedge Mode. It must be sent with Hedge Mode.
+        required: true
+        style: form
+        explode: true
+        schema:
+          type: string
+          example: "{{signature}}"
+      - name: Content-Type
+        in: header
+        required: true
+        style: simple
+        explode: false
+        schema:
+          type: string
+          example: application/json
+      - name: X-MBX-APIKEY
+        in: header
+        required: true
+        style: simple
+        explode: false
+        schema:
+          type: string
+          example: "{{binance-api-key}}"
+      responses:
+        "200": {}
+      deprecated: false
+    delete:
+      tags:
+      - Order
+      summary: Cancel Multiple Orders (TRADE)
+      operationId: CancelMultipleOrders(TRADE)
+      parameters:
+      - name: symbol
+        in: query
+        required: true
+        style: form
+        explode: true
+        schema:
+          type: string
+          example: BTCUSDT
+      - name: origClientOrderIdList
+        in: query
+        required: true
+        style: form
+        explode: true
+        schema:
+          type: string
+          example: "[IKDQAMirf7vElig8hTZHh0,HwJSQKA7drF37tqqAN6q6q]"
+      - name: timestamp
+        in: query
+        required: true
+        style: form
+        explode: true
+        schema:
+          type: string
+          example: "{{timestamp}}"
+      - name: signature
+        in: query
+        required: true
+        style: form
+        explode: true
+        schema:
+          type: string
+          example: "{{signature}}"
+      - name: Content-Type
+        in: header
+        required: true
+        style: simple
+        explode: false
+        schema:
+          type: string
+          example: application/json
+      - name: X-MBX-APIKEY
+        in: header
+        required: true
+        style: simple
+        explode: false
+        schema:
+          type: string
+          example: "{{binance-api-key}}"
+      responses:
+        "200": {}
+      deprecated: false
+  /fapi/v1/allOpenOrders:
+    delete:
+      tags:
+      - Order
+      summary: Cancel All Open Orders
+      operationId: CancelAllOpenOrders
+      parameters:
+      - name: symbol
+        in: query
+        required: true
+        style: form
+        explode: true
+        schema:
+          type: string
+          example: BTCUSDT
+      - name: timestamp
+        in: query
+        required: true
+        style: form
+        explode: true
+        schema:
+          type: string
+          example: "{{timestamp}}"
+      - name: signature
+        in: query
+        required: true
+        style: form
+        explode: true
+        schema:
+          type: string
+          example: "{{signature}}"
+      - name: Content-Type
+        in: header
+        required: true
+        style: simple
+        explode: false
+        schema:
+          type: string
+          example: application/json
+      - name: X-MBX-APIKEY
+        in: header
+        required: true
+        style: simple
+        explode: false
+        schema:
+          type: string
+          example: "{{binance-api-key}}"
+      responses:
+        "200": {}
+      deprecated: false
+  /fapi/v1/countdownCancelAll:
+    post:
+      tags:
+      - Order
+      summary: Auto-Cancel All Open Orders (TRADE)
+      operationId: Auto-CancelAllOpenOrders(TRADE)
+      parameters:
+      - name: symbol
+        in: query
+        required: true
+        style: form
+        explode: true
+        schema:
+          type: string
+      - name: countdownTime
+        in: query
+        description: "countdown time, 1000 for 1 second. 0 to cancel the timer"
+        required: true
+        style: form
+        explode: true
+        schema:
+          type: string
+      - name: timestamp
+        in: query
+        required: true
+        style: form
+        explode: true
+        schema:
+          type: string
+          example: "{{timestamp}}"
+      - name: signature
+        in: query
+        required: true
+        style: form
+        explode: true
+        schema:
+          type: string
+          example: "{{signature}}"
+      - name: Content-Type
+        in: header
+        required: true
+        style: simple
+        explode: false
+        schema:
+          type: string
+          example: application/json
+      - name: X-MBX-APIKEY
+        in: header
+        required: true
+        style: simple
+        explode: false
+        schema:
+          type: string
+          example: "{{binance-api-key}}"
+      responses:
+        "200": {}
+      deprecated: false
+  /fapi/v1/openOrders:
+    get:
+      tags:
+      - Order
+      summary: Current All Open Orders (USER_DATA)
+      operationId: CurrentAllOpenOrders(USER_DATA)
+      parameters:
+      - name: timestamp
+        in: query
+        required: true
+        style: form
+        explode: true
+        schema:
+          type: string
+          example: "{{timestamp}}"
+      - name: signature
+        in: query
+        required: true
+        style: form
+        explode: true
+        schema:
+          type: string
+          example: "{{signature}}"
+      - name: Content-Type
+        in: header
+        required: true
+        style: simple
+        explode: false
+        schema:
+          type: string
+          example: application/json
+      - name: X-MBX-APIKEY
+        in: header
+        required: true
+        style: simple
+        explode: false
+        schema:
+          type: string
+          example: "{{binance-api-key}}"
+      responses:
+        "200": {}
+      deprecated: false
+  /fapi/v1/openOrder:
+    get:
+      tags:
+      - Order
+      summary: Query Current Open Order (USER_DATA)
+      operationId: QueryCurrentOpenOrder(USER_DATA)
+      parameters:
+      - name: symbol
+        in: query
+        required: true
+        style: form
+        explode: true
+        schema:
+          type: string
+      - name: timestamp
+        in: query
+        required: true
+        style: form
+        explode: true
+        schema:
+          type: string
+          example: "{{timestamp}}"
+      - name: signature
+        in: query
+        required: true
+        style: form
+        explode: true
+        schema:
+          type: string
+          example: "{{signature}}"
+      - name: Content-Type
+        in: header
+        required: true
+        style: simple
+        explode: false
+        schema:
+          type: string
+          example: application/json
+      - name: X-MBX-APIKEY
+        in: header
+        required: true
+        style: simple
+        explode: false
+        schema:
+          type: string
+          example: "{{binance-api-key}}"
+      responses:
+        "200": {}
+      deprecated: false
+  /fapi/v1/allOrders:
+    get:
+      tags:
+      - Order
+      summary: All Orders
+      operationId: AllOrders
+      parameters:
+      - name: symbol
+        in: query
+        required: true
+        style: form
+        explode: true
+        schema:
+          type: string
+      - name: timestamp
+        in: query
+        required: true
+        style: form
+        explode: true
+        schema:
+          type: string
+          example: "{{timestamp}}"
+      - name: signature
+        in: query
+        required: true
+        style: form
+        explode: true
+        schema:
+          type: string
+          example: "{{signature}}"
+      - name: Content-Type
+        in: header
+        required: true
+        style: simple
+        explode: false
+        schema:
+          type: string
+          example: application/json
+      - name: X-MBX-APIKEY
+        in: header
+        required: true
+        style: simple
+        explode: false
+        schema:
+          type: string
+          example: "{{binance-api-key}}"
+      responses:
+        "200": {}
+      deprecated: false
+  /fapi/v1/forceOrders:
+    get:
+      tags:
+      - Order
+      summary: User's Force Orders (USER_DATA)
+      operationId: User'sForceOrders(USER_DATA)
+      parameters:
+      - name: timestamp
+        in: query
+        required: true
+        style: form
+        explode: true
+        schema:
+          type: string
+          example: "{{timestamp}}"
+      - name: signature
+        in: query
+        required: true
+        style: form
+        explode: true
+        schema:
+          type: string
+          example: "{{signature}}"
+      - name: Content-Type
+        in: header
+        required: true
+        style: simple
+        explode: false
+        schema:
+          type: string
+          example: application/json
+      - name: X-MBX-APIKEY
+        in: header
+        required: true
+        style: simple
+        explode: false
+        schema:
+          type: string
+          example: "{{binance-api-key}}"
+      responses:
+        "200": {}
+      deprecated: false
+  /fapi/v1/marginType:
+    post:
+      tags:
+      - Trade
+      summary: Change Margin Type
+      operationId: ChangeMarginType
+      parameters:
+      - name: symbol
+        in: query
+        required: true
+        style: form
+        explode: true
+        schema:
+          type: string
+          example: BTCUSDT
+      - name: marginType
+        in: query
+        required: true
+        style: form
+        explode: true
+        schema:
+          type: string
+          example: ISOLATED
+      - name: timestamp
+        in: query
+        required: true
+        style: form
+        explode: true
+        schema:
+          type: string
+          example: "{{timestamp}}"
+      - name: signature
+        in: query
+        required: true
+        style: form
+        explode: true
+        schema:
+          type: string
+          example: "{{signature}}"
+      - name: Content-Type
+        in: header
+        required: true
+        style: simple
+        explode: false
+        schema:
+          type: string
+          example: application/json
+      - name: X-MBX-APIKEY
+        in: header
+        required: true
+        style: simple
+        explode: false
+        schema:
+          type: string
+          example: "{{binance-api-key}}"
+      responses:
+        "200": {}
+      deprecated: false
+  /fapi/v1/leverage:
+    post:
+      tags:
+      - Trade
+      summary: Change Initial Leverage
+      operationId: ChangeInitialLeverage
+      parameters:
+      - name: symbol
+        in: query
+        required: true
+        style: form
+        explode: true
+        schema:
+          type: string
+          example: BTCUSDT
+      - name: leverage
+        in: query
+        required: true
+        style: form
+        explode: true
+        schema:
+          type: integer
+          format: int32
+          example: 20
+      - name: timestamp
+        in: query
+        required: true
+        style: form
+        explode: true
+        schema:
+          type: string
+          example: "{{timestamp}}"
+      - name: signature
+        in: query
+        required: true
+        style: form
+        explode: true
+        schema:
+          type: string
+          example: "{{signature}}"
+      - name: Content-Type
+        in: header
+        required: true
+        style: simple
+        explode: false
+        schema:
+          type: string
+          example: application/json
+      - name: X-MBX-APIKEY
+        in: header
+        required: true
+        style: simple
+        explode: false
+        schema:
+          type: string
+          example: "{{binance-api-key}}"
+      responses:
+        "200": {}
+      deprecated: false
+  /fapi/v1/positionMargin:
+    post:
+      tags:
+      - Trade
+      summary: Modify Isolated Position Margin
+      operationId: ModifyIsolatedPositionMargin
+      parameters:
+      - name: symbol
+        in: query
+        required: true
+        style: form
+        explode: true
+        schema:
+          type: string
+          example: BTCUSDT
+      - name: amount
+        in: query
+        required: true
+        style: form
+        explode: true
+        schema:
+          type: integer
+          format: int32
+          example: 100
+      - name: type
+        in: query
+        required: true
+        style: form
+        explode: true
+        schema:
+          type: integer
+          format: int32
+          example: 1
+      - name: timestamp
+        in: query
+        required: true
+        style: form
+        explode: true
+        schema:
+          type: string
+          example: "{{timestamp}}"
+      - name: signature
+        in: query
+        required: true
+        style: form
+        explode: true
+        schema:
+          type: string
+          example: "{{signature}}"
+      - name: Content-Type
+        in: header
+        required: true
+        style: simple
+        explode: false
+        schema:
+          type: string
+          example: application/json
+      - name: X-MBX-APIKEY
+        in: header
+        required: true
+        style: simple
+        explode: false
+        schema:
+          type: string
+          example: "{{binance-api-key}}"
+      responses:
+        "200": {}
+      deprecated: false
+  /fapi/v1/positionMargin/history:
+    get:
+      tags:
+      - Trade
+      summary: Get Postion Margin Change History
+      operationId: GetPostionMarginChangeHistory
+      parameters:
+      - name: symbol
+        in: query
+        required: true
+        style: form
+        explode: true
+        schema:
+          type: string
+          example: BTCUSDT
+      - name: timestamp
+        in: query
+        required: true
+        style: form
+        explode: true
+        schema:
+          type: string
+          example: "{{timestamp}}"
+      - name: signature
+        in: query
+        required: true
+        style: form
+        explode: true
+        schema:
+          type: string
+          example: "{{signature}}"
+      - name: Content-Type
+        in: header
+        required: true
+        style: simple
+        explode: false
+        schema:
+          type: string
+          example: application/json
+      - name: X-MBX-APIKEY
+        in: header
+        required: true
+        style: simple
+        explode: false
+        schema:
+          type: string
+          example: "{{binance-api-key}}"
+      responses:
+        "200": {}
+      deprecated: false
+  /fapi/v1/positionSide/dual:
+    get:
+      tags:
+      - Trade
+      summary: Get Current Position Mode（USER_DATA）
+      operationId: GetCurrentPositionMode（USER_DATA）
+      parameters:
+      - name: timestamp
+        in: query
+        required: true
+        style: form
+        explode: true
+        schema:
+          type: string
+          example: "{{timestamp}}"
+      - name: signature
+        in: query
+        required: true
+        style: form
+        explode: true
+        schema:
+          type: string
+          example: "{{signature}}"
+      - name: Content-Type
+        in: header
+        required: true
+        style: simple
+        explode: false
+        schema:
+          type: string
+          example: application/json
+      - name: X-MBX-APIKEY
+        in: header
+        required: true
+        style: simple
+        explode: false
+        schema:
+          type: string
+          example: "{{binance-api-key}}"
+      responses:
+        "200": {}
+      deprecated: false
+    post:
+      tags:
+      - Trade
+      summary: Change Position Mode（TRADE）
+      operationId: ChangePositionMode（TRADE）
+      parameters:
+      - name: dualSidePosition
+        in: query
+        description: "Boolean value. \"true\": Hedge Mode mode; \"false\": One-way\
+          \ Mode"
+        required: true
+        style: form
+        explode: true
+        schema:
+          type: string
+      - name: timestamp
+        in: query
+        required: true
+        style: form
+        explode: true
+        schema:
+          type: string
+          example: "{{timestamp}}"
+      - name: signature
+        in: query
+        required: true
+        style: form
+        explode: true
+        schema:
+          type: string
+          example: "{{signature}}"
+      - name: Content-Type
+        in: header
+        required: true
+        style: simple
+        explode: false
+        schema:
+          type: string
+          example: application/json
+      - name: X-MBX-APIKEY
+        in: header
+        required: true
+        style: simple
+        explode: false
+        schema:
+          type: string
+          example: "{{binance-api-key}}"
+      responses:
+        "200": {}
+      deprecated: false
+  /fapi/v1/apiTradingStatus:
+    get:
+      tags:
+      - Trade
+      summary: User API Trading Quantitative Rules Indicators (USER_DATA)
+      operationId: UserAPITradingQuantitativeRulesIndicators(USER_DATA)
+      parameters:
+      - name: timestamp
+        in: query
+        required: true
+        style: form
+        explode: true
+        schema:
+          type: string
+          example: "{{timestamp}}"
+      - name: signature
+        in: query
+        required: true
+        style: form
+        explode: true
+        schema:
+          type: string
+          example: "{{signature}}"
+      - name: Content-Type
+        in: header
+        required: true
+        style: simple
+        explode: false
+        schema:
+          type: string
+          example: application/json
+      - name: X-MBX-APIKEY
+        in: header
+        required: true
+        style: simple
+        explode: false
+        schema:
+          type: string
+          example: "{{binance-api-key}}"
+      responses:
+        "200": {}
+      deprecated: false
+  /fapi/v1/listenKey:
+    put:
+      tags:
+      - Data Stream
+      summary: Renew Listen Key
+      operationId: RenewListenKey
+      parameters:
+      - name: Content-Type
+        in: header
+        required: true
+        style: simple
+        explode: false
+        schema:
+          type: string
+          example: application/json
+      - name: X-MBX-APIKEY
+        in: header
+        required: true
+        style: simple
+        explode: false
+        schema:
+          type: string
+          example: "{{binance-api-key}}"
+      responses:
+        "200": {}
+      deprecated: false
+    post:
+      tags:
+      - Data Stream
+      summary: Create New Listen Key
+      operationId: CreateNewListenKey
+      parameters:
+      - name: Content-Type
+        in: header
+        required: true
+        style: simple
+        explode: false
+        schema:
+          type: string
+          example: application/json
+      - name: X-MBX-APIKEY
+        in: header
+        required: true
+        style: simple
+        explode: false
+        schema:
+          type: string
+          example: "{{binance-api-key}}"
+      responses:
+        "200": {}
+      deprecated: false
+    delete:
+      tags:
+      - Data Stream
+      summary: Delete Listen Key
+      operationId: DeleteListenKey
+      parameters:
+      - name: Content-Type
+        in: header
+        required: true
+        style: simple
+        explode: false
+        schema:
+          type: string
+          example: application/json
+      - name: X-MBX-APIKEY
+        in: header
+        required: true
+        style: simple
+        explode: false
+        schema:
+          type: string
+          example: "{{binance-api-key}}"
+      responses:
+        "200": {}
+      deprecated: false
+components: {}

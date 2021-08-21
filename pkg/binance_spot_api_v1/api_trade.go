@@ -78,15 +78,12 @@ func (a *TradeApiService) AccountInformationUSERDATA(ctx context.Context, timest
 	if err != nil || localVarHttpResponse == nil {
 		return localVarHttpResponse, err
 	}
-
-	localVarBody, err := ioutil.ReadAll(localVarHttpResponse.Body)
-	localVarHttpResponse.Body.Close()
-	if err != nil {
-		return localVarHttpResponse, err
-	}
-
-
 	if localVarHttpResponse.StatusCode >= 300 {
+		localVarBody, err := ioutil.ReadAll(localVarHttpResponse.Body)
+		localVarHttpResponse.Body.Close()
+		if err != nil {
+			return localVarHttpResponse, err
+		}
 		newErr := GenericSwaggerError{
 			body: localVarBody,
 			error: localVarHttpResponse.Status,
@@ -153,15 +150,12 @@ func (a *TradeApiService) AccountTradeListUSERDATA(ctx context.Context, symbol s
 	if err != nil || localVarHttpResponse == nil {
 		return localVarHttpResponse, err
 	}
-
-	localVarBody, err := ioutil.ReadAll(localVarHttpResponse.Body)
-	localVarHttpResponse.Body.Close()
-	if err != nil {
-		return localVarHttpResponse, err
-	}
-
-
 	if localVarHttpResponse.StatusCode >= 300 {
+		localVarBody, err := ioutil.ReadAll(localVarHttpResponse.Body)
+		localVarHttpResponse.Body.Close()
+		if err != nil {
+			return localVarHttpResponse, err
+		}
 		newErr := GenericSwaggerError{
 			body: localVarBody,
 			error: localVarHttpResponse.Status,
@@ -228,15 +222,12 @@ func (a *TradeApiService) AllOrdersUSERDATA(ctx context.Context, symbol string, 
 	if err != nil || localVarHttpResponse == nil {
 		return localVarHttpResponse, err
 	}
-
-	localVarBody, err := ioutil.ReadAll(localVarHttpResponse.Body)
-	localVarHttpResponse.Body.Close()
-	if err != nil {
-		return localVarHttpResponse, err
-	}
-
-
 	if localVarHttpResponse.StatusCode >= 300 {
+		localVarBody, err := ioutil.ReadAll(localVarHttpResponse.Body)
+		localVarHttpResponse.Body.Close()
+		if err != nil {
+			return localVarHttpResponse, err
+		}
 		newErr := GenericSwaggerError{
 			body: localVarBody,
 			error: localVarHttpResponse.Status,
@@ -303,15 +294,12 @@ func (a *TradeApiService) CancelOCOTRADE(ctx context.Context, symbol string, tim
 	if err != nil || localVarHttpResponse == nil {
 		return localVarHttpResponse, err
 	}
-
-	localVarBody, err := ioutil.ReadAll(localVarHttpResponse.Body)
-	localVarHttpResponse.Body.Close()
-	if err != nil {
-		return localVarHttpResponse, err
-	}
-
-
 	if localVarHttpResponse.StatusCode >= 300 {
+		localVarBody, err := ioutil.ReadAll(localVarHttpResponse.Body)
+		localVarHttpResponse.Body.Close()
+		if err != nil {
+			return localVarHttpResponse, err
+		}
 		newErr := GenericSwaggerError{
 			body: localVarBody,
 			error: localVarHttpResponse.Status,
@@ -380,15 +368,12 @@ func (a *TradeApiService) CancelOrder(ctx context.Context, symbol string, orderI
 	if err != nil || localVarHttpResponse == nil {
 		return localVarHttpResponse, err
 	}
-
-	localVarBody, err := ioutil.ReadAll(localVarHttpResponse.Body)
-	localVarHttpResponse.Body.Close()
-	if err != nil {
-		return localVarHttpResponse, err
-	}
-
-
 	if localVarHttpResponse.StatusCode >= 300 {
+		localVarBody, err := ioutil.ReadAll(localVarHttpResponse.Body)
+		localVarHttpResponse.Body.Close()
+		if err != nil {
+			return localVarHttpResponse, err
+		}
 		newErr := GenericSwaggerError{
 			body: localVarBody,
 			error: localVarHttpResponse.Status,
@@ -455,15 +440,12 @@ func (a *TradeApiService) CancelallOpenOrdersonaSymbolTRADE(ctx context.Context,
 	if err != nil || localVarHttpResponse == nil {
 		return localVarHttpResponse, err
 	}
-
-	localVarBody, err := ioutil.ReadAll(localVarHttpResponse.Body)
-	localVarHttpResponse.Body.Close()
-	if err != nil {
-		return localVarHttpResponse, err
-	}
-
-
 	if localVarHttpResponse.StatusCode >= 300 {
+		localVarBody, err := ioutil.ReadAll(localVarHttpResponse.Body)
+		localVarHttpResponse.Body.Close()
+		if err != nil {
+			return localVarHttpResponse, err
+		}
 		newErr := GenericSwaggerError{
 			body: localVarBody,
 			error: localVarHttpResponse.Status,
@@ -528,15 +510,12 @@ func (a *TradeApiService) CurrentOpenOrdersUSERDATA(ctx context.Context, timesta
 	if err != nil || localVarHttpResponse == nil {
 		return localVarHttpResponse, err
 	}
-
-	localVarBody, err := ioutil.ReadAll(localVarHttpResponse.Body)
-	localVarHttpResponse.Body.Close()
-	if err != nil {
-		return localVarHttpResponse, err
-	}
-
-
 	if localVarHttpResponse.StatusCode >= 300 {
+		localVarBody, err := ioutil.ReadAll(localVarHttpResponse.Body)
+		localVarHttpResponse.Body.Close()
+		if err != nil {
+			return localVarHttpResponse, err
+		}
 		newErr := GenericSwaggerError{
 			body: localVarBody,
 			error: localVarHttpResponse.Status,
@@ -611,15 +590,12 @@ func (a *TradeApiService) NewOCOTRADE(ctx context.Context, symbol string, side s
 	if err != nil || localVarHttpResponse == nil {
 		return localVarHttpResponse, err
 	}
-
-	localVarBody, err := ioutil.ReadAll(localVarHttpResponse.Body)
-	localVarHttpResponse.Body.Close()
-	if err != nil {
-		return localVarHttpResponse, err
-	}
-
-
 	if localVarHttpResponse.StatusCode >= 300 {
+		localVarBody, err := ioutil.ReadAll(localVarHttpResponse.Body)
+		localVarHttpResponse.Body.Close()
+		if err != nil {
+			return localVarHttpResponse, err
+		}
 		newErr := GenericSwaggerError{
 			body: localVarBody,
 			error: localVarHttpResponse.Status,
@@ -694,15 +670,12 @@ func (a *TradeApiService) NewOrder(ctx context.Context, symbol string, side stri
 	if err != nil || localVarHttpResponse == nil {
 		return localVarHttpResponse, err
 	}
-
-	localVarBody, err := ioutil.ReadAll(localVarHttpResponse.Body)
-	localVarHttpResponse.Body.Close()
-	if err != nil {
-		return localVarHttpResponse, err
-	}
-
-
 	if localVarHttpResponse.StatusCode >= 300 {
+		localVarBody, err := ioutil.ReadAll(localVarHttpResponse.Body)
+		localVarHttpResponse.Body.Close()
+		if err != nil {
+			return localVarHttpResponse, err
+		}
 		newErr := GenericSwaggerError{
 			body: localVarBody,
 			error: localVarHttpResponse.Status,
@@ -767,15 +740,12 @@ func (a *TradeApiService) QueryOCOUSERDATA(ctx context.Context, timestamp string
 	if err != nil || localVarHttpResponse == nil {
 		return localVarHttpResponse, err
 	}
-
-	localVarBody, err := ioutil.ReadAll(localVarHttpResponse.Body)
-	localVarHttpResponse.Body.Close()
-	if err != nil {
-		return localVarHttpResponse, err
-	}
-
-
 	if localVarHttpResponse.StatusCode >= 300 {
+		localVarBody, err := ioutil.ReadAll(localVarHttpResponse.Body)
+		localVarHttpResponse.Body.Close()
+		if err != nil {
+			return localVarHttpResponse, err
+		}
 		newErr := GenericSwaggerError{
 			body: localVarBody,
 			error: localVarHttpResponse.Status,
@@ -840,15 +810,12 @@ func (a *TradeApiService) QueryOpenOCOUSERDATA(ctx context.Context, timestamp st
 	if err != nil || localVarHttpResponse == nil {
 		return localVarHttpResponse, err
 	}
-
-	localVarBody, err := ioutil.ReadAll(localVarHttpResponse.Body)
-	localVarHttpResponse.Body.Close()
-	if err != nil {
-		return localVarHttpResponse, err
-	}
-
-
 	if localVarHttpResponse.StatusCode >= 300 {
+		localVarBody, err := ioutil.ReadAll(localVarHttpResponse.Body)
+		localVarHttpResponse.Body.Close()
+		if err != nil {
+			return localVarHttpResponse, err
+		}
 		newErr := GenericSwaggerError{
 			body: localVarBody,
 			error: localVarHttpResponse.Status,
@@ -915,15 +882,12 @@ func (a *TradeApiService) QueryOrderUSERDATA(ctx context.Context, symbol string,
 	if err != nil || localVarHttpResponse == nil {
 		return localVarHttpResponse, err
 	}
-
-	localVarBody, err := ioutil.ReadAll(localVarHttpResponse.Body)
-	localVarHttpResponse.Body.Close()
-	if err != nil {
-		return localVarHttpResponse, err
-	}
-
-
 	if localVarHttpResponse.StatusCode >= 300 {
+		localVarBody, err := ioutil.ReadAll(localVarHttpResponse.Body)
+		localVarHttpResponse.Body.Close()
+		if err != nil {
+			return localVarHttpResponse, err
+		}
 		newErr := GenericSwaggerError{
 			body: localVarBody,
 			error: localVarHttpResponse.Status,
@@ -988,15 +952,12 @@ func (a *TradeApiService) QueryallOCOUSERDATA(ctx context.Context, timestamp str
 	if err != nil || localVarHttpResponse == nil {
 		return localVarHttpResponse, err
 	}
-
-	localVarBody, err := ioutil.ReadAll(localVarHttpResponse.Body)
-	localVarHttpResponse.Body.Close()
-	if err != nil {
-		return localVarHttpResponse, err
-	}
-
-
 	if localVarHttpResponse.StatusCode >= 300 {
+		localVarBody, err := ioutil.ReadAll(localVarHttpResponse.Body)
+		localVarHttpResponse.Body.Close()
+		if err != nil {
+			return localVarHttpResponse, err
+		}
 		newErr := GenericSwaggerError{
 			body: localVarBody,
 			error: localVarHttpResponse.Status,
@@ -1071,15 +1032,12 @@ func (a *TradeApiService) TestNewOrderTRADE(ctx context.Context, symbol string, 
 	if err != nil || localVarHttpResponse == nil {
 		return localVarHttpResponse, err
 	}
-
-	localVarBody, err := ioutil.ReadAll(localVarHttpResponse.Body)
-	localVarHttpResponse.Body.Close()
-	if err != nil {
-		return localVarHttpResponse, err
-	}
-
-
 	if localVarHttpResponse.StatusCode >= 300 {
+		localVarBody, err := ioutil.ReadAll(localVarHttpResponse.Body)
+		localVarHttpResponse.Body.Close()
+		if err != nil {
+			return localVarHttpResponse, err
+		}
 		newErr := GenericSwaggerError{
 			body: localVarBody,
 			error: localVarHttpResponse.Status,

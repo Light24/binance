@@ -2,11 +2,9 @@ package main
 
 import (
 	"context"
-	"crypto/hmac"
-	"crypto/sha256"
-	"encoding/base64"
 	"github.com/sirupsen/logrus"
 	"gopkg.in/natefinch/lumberjack.v2"
+	"io/ioutil"
 	"net/http"
 	"strconv"
 	"time"
@@ -43,22 +41,19 @@ func main() {
 			Timeout: time.Second * 10,
 		},
 	}
+
 	apiClient := binanceSpot.NewAPIClient(cfg)
 
 	ctx := context.Background()
 	timestamp := strconv.FormatInt(time.Now().Unix()*1000, 10)
-	apiSecret := "KTCu2dTCp66eMUCR45RIuUiQkftR7hrzmxYg13i0EBuo1DWhFyJeg1WjQVpTMdfG"
-	apiKey := "WuKmhxvuuB70ALYjFoKZMEQVLcQKrqPb3hpzOk8HKJG41zBo7szhuGgeJsQcYXaM"
+	apiKey := "lgtrEDSGBbFm3eEoQL6oCrCNXRaWzAGJL4jAdvZIrtqqApWaBMKfW7WDnObIhGAt"
+	apiSecret := "qrw3iV9BynFEdwrMmmP4vkvusWeLCv1fC6O50veodZ5gBRZ4uKFBNoYeVn2v0Xpz"
 
-	signature := buildSignature(, []byte(apiSecret))
-	resp, err := apiClient.TradeApi.AccountInformationUSERDATA(ctx, timestamp, signature, "", apiKey)
+	resp, err := apiClient.TradeApi.AccountInformationUSERDATA(ctx, timestamp, apiSecret, "", apiKey)
+	if err != nil {
+		return
+	}
+	localVarBody, err := ioutil.ReadAll(resp.Body)
 
-	logrus.Println("res %v %v", resp, err)
-}
-
-func buildSignature(data []byte, apiSecret []byte) string {
-	h := hmac.New(sha256.New, apiSecret)
-	h.Write(data)
-	return base64.StdEncoding.EncodeToString(h.Sum(nil))
-	// return crypto.createHmac('sha256', config.API_SECRET).update(data).digest('hex')
+	logrus.Println("res %s %v", string(localVarBody), err)
 }

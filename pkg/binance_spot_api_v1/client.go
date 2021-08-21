@@ -11,6 +11,9 @@ package swagger
 import (
 	"bytes"
 	"context"
+	"crypto/hmac"
+	"crypto/sha256"
+	"encoding/hex"
 	"encoding/json"
 	"encoding/xml"
 	"errors"
@@ -194,6 +197,17 @@ func (c *APIClient) ChangeBasePath(path string) {
 	c.cfg.BasePath = path
 }
 
+func buildSignature(data url.Values, apiSecret string) string {
+	queryParams := data.Encode()
+
+	mac := hmac.New(sha256.New, []byte(apiSecret))
+	mac.Write([]byte(queryParams))
+
+	str := hex.EncodeToString(mac.Sum(nil))
+	return str
+	// return crypto.createHmac('sha256', config.API_SECRET).update(data).digest('hex')
+}
+
 // prepareRequest build the request
 func (c *APIClient) prepareRequest(
 	ctx context.Context,
@@ -220,6 +234,15 @@ func (c *APIClient) prepareRequest(
 			return nil, err
 		}
 	}
+
+	// dirty xak begin
+	signature := queryParams.Get("signature")
+	if len(signature) != 0 {
+		queryParams.Del("signature")
+		queryParams.Set("recvWindow", "5000")
+		queryParams.Set("signature", buildSignature(queryParams, signature))
+	}
+	// dirty xak end
 
 	// add form parameters and file if available.
 	if strings.HasPrefix(headerParams["Content-Type"], "multipart/form-data") && len(formParams) > 0 || (len(fileBytes) > 0 && fileName != "") {
@@ -351,17 +374,17 @@ func (c *APIClient) prepareRequest(
 }
 
 func (c *APIClient) decode(v interface{}, b []byte, contentType string) (err error) {
-		if strings.Contains(contentType, "application/xml") {
-			if err = xml.Unmarshal(b, v); err != nil {
-				return err
-			}
-			return nil
-		} else if strings.Contains(contentType, "application/json") {
-			if err = json.Unmarshal(b, v); err != nil {
-				return err
-			}
-			return nil
+	if strings.Contains(contentType, "application/xml") {
+		if err = xml.Unmarshal(b, v); err != nil {
+			return err
 		}
+		return nil
+	} else if strings.Contains(contentType, "application/json") {
+		if err = json.Unmarshal(b, v); err != nil {
+			return err
+		}
+		return nil
+	}
 	return errors.New("undefined response type")
 }
 

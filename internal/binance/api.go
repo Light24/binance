@@ -1,8 +1,10 @@
-package internal
+package binance
 
 import (
+	"binance-trade-bot/internal"
 	"encoding/json"
 	"github.com/dirname/binance"
+	binanceConfig "github.com/dirname/binance/config"
 	binanceLogger "github.com/dirname/binance/logging"
 	"github.com/dirname/binance/model"
 	binanceSpot "github.com/dirname/binance/spot/client"
@@ -31,23 +33,28 @@ type BinanceClient interface {
 	DeleteOrder(symbol, origClientOrderID, newClientOrderID string, orderID int64) (*binanceSpot.DeleteOrderResponse, error)
 }
 
-type BinanceClientImpl struct {
+type binanceClientImpl struct {
 	*binanceSpot.WalletClient
 	*binanceSpot.TradeClient
 	*binanceSpot.MarketClient
 	recvTimeout time.Duration
 }
 
-func NewBinanceClient(config AppConfig) BinanceClient {
-	return &BinanceClientImpl{
-		WalletClient: binanceSpot.NewWalletClient(config.Host, config.ApiKey, config.ApiSecret),
-		TradeClient:  binanceSpot.NewTradeClient(config.Host, config.ApiKey, config.ApiSecret),
-		MarketClient: binanceSpot.NewMarketClient(config.Host, config.ApiKey),
+func NewBinanceClient(config internal.AppConfig) BinanceClient {
+	host := binanceConfig.SpotRestHost
+	if config.TestNet {
+		host = "testnet.binance.vision"
+	}
+
+	return &binanceClientImpl{
+		WalletClient: binanceSpot.NewWalletClient(host, config.ApiKey, config.ApiSecret),
+		TradeClient:  binanceSpot.NewTradeClient(host, config.ApiKey, config.ApiSecret),
+		MarketClient: binanceSpot.NewMarketClient(host, config.ApiKey),
 		recvTimeout:  config.RecvTimeout,
 	}
 }
 
-func (c *BinanceClientImpl) GetAccountInfo() (*binanceSpot.AccountInfoResponse, error) {
+func (c *binanceClientImpl) GetAccountInfo() (*binanceSpot.AccountInfoResponse, error) {
 	interfaceResp, err := c.TradeClient.GetAccountInfo(c.recvTimeout)
 	if err != nil {
 		return nil, err
@@ -59,7 +66,7 @@ func (c *BinanceClientImpl) GetAccountInfo() (*binanceSpot.AccountInfoResponse, 
 	return &resp, nil
 }
 
-func (c *BinanceClientImpl) SAPITradeFee(symbol string) (*binanceSpot.SAPITradeFeeResponse, error) {
+func (c *binanceClientImpl) SAPITradeFee(symbol string) (*binanceSpot.SAPITradeFeeResponse, error) {
 	interfaceResp, err := c.WalletClient.SAPITradeFee(symbol, c.recvTimeout)
 	if err != nil {
 		return nil, err
@@ -71,7 +78,7 @@ func (c *BinanceClientImpl) SAPITradeFee(symbol string) (*binanceSpot.SAPITradeF
 	return &resp, nil
 }
 
-func (c *BinanceClientImpl) GetBnbBurn() (*GetBnbBurnResponse, error) {
+func (c *binanceClientImpl) GetBnbBurn() (*GetBnbBurnResponse, error) {
 	interfaceResp, err := c.GetBnbBurnImpl(c.recvTimeout)
 	if err != nil {
 		return nil, err
@@ -83,7 +90,7 @@ func (c *BinanceClientImpl) GetBnbBurn() (*GetBnbBurnResponse, error) {
 	return resp, nil
 }
 
-func (c *BinanceClientImpl) GetSymbolTickerPrice(symbol string) (*binanceSpot.SymbolPriceTickerResponse, error) {
+func (c *binanceClientImpl) GetSymbolTickerPrice(symbol string) (*binanceSpot.SymbolPriceTickerResponse, error) {
 	interfaceResp, err := c.MarketClient.GetSymbolTickerPrice(symbol)
 	if err != nil {
 		return nil, err
@@ -95,7 +102,7 @@ func (c *BinanceClientImpl) GetSymbolTickerPrice(symbol string) (*binanceSpot.Sy
 	return &resp, nil
 }
 
-func (c *BinanceClientImpl) GetExchangeInfo() (*binanceSpot.ExchangeInfoResponse, error) {
+func (c *binanceClientImpl) GetExchangeInfo() (*binanceSpot.ExchangeInfoResponse, error) {
 	interfaceResp, err := c.MarketClient.GetExchangeInfo()
 	if err != nil {
 		return nil, err
@@ -107,7 +114,7 @@ func (c *BinanceClientImpl) GetExchangeInfo() (*binanceSpot.ExchangeInfoResponse
 	return &resp, nil
 }
 
-func (c *BinanceClientImpl) NewOrder(symbol, side, orderType, timeInForce, newClientOderID, newOrderRespType string, quantity, quoteOrderQTY, price, stopPrice, icebergQTY decimal.Decimal) (interface{}, error) {
+func (c *binanceClientImpl) NewOrder(symbol, side, orderType, timeInForce, newClientOderID, newOrderRespType string, quantity, quoteOrderQTY, price, stopPrice, icebergQTY decimal.Decimal) (interface{}, error) {
 	interfaceResp, err := c.TradeClient.NewOrder(symbol, side, orderType, timeInForce, newClientOderID, newOrderRespType, quantity, quoteOrderQTY, price, stopPrice, icebergQTY, c.recvTimeout)
 	if err != nil {
 		return nil, err
@@ -126,7 +133,7 @@ func (c *BinanceClientImpl) NewOrder(symbol, side, orderType, timeInForce, newCl
 	return nil, errors.Errorf("Imposibble situations: %v", interfaceResp)
 }
 
-func (c *BinanceClientImpl) NewOCO(symbol, listClientOrderID, side, limitClientOrderId, stopClientOrderId, stopLimitTimeInForce, newOrderRespType string, quantity, price, limitIcebergQty, stopPrice, stopLimitPrice, stopIcebergQty decimal.Decimal) (*binanceSpot.NewOCOOrderResponse, error) {
+func (c *binanceClientImpl) NewOCO(symbol, listClientOrderID, side, limitClientOrderId, stopClientOrderId, stopLimitTimeInForce, newOrderRespType string, quantity, price, limitIcebergQty, stopPrice, stopLimitPrice, stopIcebergQty decimal.Decimal) (*binanceSpot.NewOCOOrderResponse, error) {
 	interfaceResp, err := c.TradeClient.NewOCO(symbol, listClientOrderID, side, limitClientOrderId, stopClientOrderId, stopLimitTimeInForce, newOrderRespType, quantity, price, limitIcebergQty, stopPrice, stopLimitPrice, stopIcebergQty, c.recvTimeout)
 	if err != nil {
 		return nil, err
@@ -138,7 +145,7 @@ func (c *BinanceClientImpl) NewOCO(symbol, listClientOrderID, side, limitClientO
 	return &resp, nil
 }
 
-func (c *BinanceClientImpl) DeleteOrder(symbol, origClientOrderID, newClientOrderID string, orderID int64) (*binanceSpot.DeleteOrderResponse, error) {
+func (c *binanceClientImpl) DeleteOrder(symbol, origClientOrderID, newClientOrderID string, orderID int64) (*binanceSpot.DeleteOrderResponse, error) {
 	interfaceResp, err := c.TradeClient.DeleteOrder(symbol, origClientOrderID, newClientOrderID, orderID, c.recvTimeout)
 	if err != nil {
 		return nil, err
@@ -158,7 +165,7 @@ type GetBnbBurnResponse struct {
 	InterestBNBBurn bool `json:"interestBNBBurn"`
 }
 
-func (c *BinanceClientImpl) GetBnbBurnImpl(recv time.Duration) (interface{}, error) {
+func (c *binanceClientImpl) GetBnbBurnImpl(recv time.Duration) (interface{}, error) {
 	var err error
 	req, err := c.WalletClient.Builder.Build(http.MethodGet, "/sapi/v1/bnbBurn", "", true, true, recv)
 	if err != nil {

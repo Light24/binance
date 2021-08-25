@@ -27,22 +27,11 @@ func main() {
 	chanStop := make(chan interface{})
 
 	config := internal.InitConfig()
-	binanceClient := binance.NewBinanceClient(config)
-	accountInfo, err := binanceClient.GetAccountInfo()
+	binanceManager, err := binance.New(config, chanStop)
 	if err != nil {
 		logrus.Fatal("Couldn't access Binance API - API keys may be wrong or lack sufficient permissions [error: %v]", err)
 	}
-	logrus.Info(accountInfo)
 
-	binanceRealtimeClient, err := binance.NewCacheClient(config, chanStop)
-	if err != nil {
-		logrus.Fatal("Couldn't access Socket API -  [error: %v]", err)
-	}
-
-	_ = accountInfo
-
-	_ = binanceRealtimeClient
-
-	strategies.NewStrategy(binanceClient, config)
+	strategies.NewStrategy(binanceManager, config)
 	time.Sleep(time.Hour)
 }

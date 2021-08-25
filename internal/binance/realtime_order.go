@@ -8,16 +8,16 @@ import (
 	"time"
 )
 
-type RealtimeOrderClient interface {
-	Close()
+type realtimeOrderClient interface {
+	close()
 }
 
-type RealtimeOrderClientImpl struct {
+type realtimeOrderClientImpl struct {
 	*binanceAccountWebsocket.OrderWebsocketClient
 }
 
-func NewBinanceRealtimeOrderClient(config internal.AppConfig, key string) (RealtimeOrderClient, error) {
-	client := RealtimeOrderClientImpl{
+func newBinanceRealtimeOrderClient(config internal.AppConfig, key string) (realtimeOrderClient, error) {
+	client := realtimeOrderClientImpl{
 		OrderWebsocketClient: newOrderWebsocketClient(config.HostWss, key),
 	}
 
@@ -56,7 +56,7 @@ func newOrderWebsocketClient(host string, streams ...string) *binanceAccountWebs
 	return c
 }
 
-func (c RealtimeOrderClientImpl) Close() {
+func (c realtimeOrderClientImpl) close() {
 	c.Close()
 	logrus.Info("Client closed")
 }

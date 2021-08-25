@@ -8,17 +8,17 @@ import (
 	"time"
 )
 
-type RealtimeBalanceClient interface {
-	Close()
+type realtimeBalanceClient interface {
+	close()
 }
 
-type RealtimeBalanceClientImpl struct {
+type realtimeBalanceClientImpl struct {
 	*binanceAccountWebsocket.BalanceWebsocketClient
 	stop chan interface{}
 }
 
-func NewBinanceRealtimeBalanceClient(config internal.AppConfig, key string) (RealtimeBalanceClient, error) {
-	client := RealtimeBalanceClientImpl{
+func newBinanceRealtimeBalanceClient(config internal.AppConfig, key string) (realtimeBalanceClient, error) {
+	client := realtimeBalanceClientImpl{
 		BalanceWebsocketClient: newBalanceWebsocketClient(config.HostWss, key),
 	}
 
@@ -54,7 +54,7 @@ func newBalanceWebsocketClient(host string, streams ...string) *binanceAccountWe
 	return c
 }
 
-func (c RealtimeBalanceClientImpl) Close() {
+func (c realtimeBalanceClientImpl) close() {
 	c.Close()
 	logrus.Info("Client closed")
 }

@@ -8,16 +8,16 @@ import (
 	"time"
 )
 
-type RealtimeAccountClient interface {
-	Close()
+type realtimeAccountClient interface {
+	close()
 }
 
-type RealtimeAccountClientImpl struct {
+type realtimeAccountClientImpl struct {
 	*binanceAccountWebsocket.AccountWebsocketClient
 }
 
-func NewBinanceRealtimeAccountClient(config internal.AppConfig, key string) (RealtimeAccountClient, error) {
-	client := RealtimeAccountClientImpl{
+func newBinanceRealtimeAccountClient(config internal.AppConfig, key string) (realtimeAccountClient, error) {
+	client := realtimeAccountClientImpl{
 		AccountWebsocketClient: newAccountWebsocketClient(config.HostWss, key),
 	}
 
@@ -53,7 +53,7 @@ func newAccountWebsocketClient(host string, streams ...string) *binanceAccountWe
 	return c
 }
 
-func (c RealtimeAccountClientImpl) Close() {
+func (c realtimeAccountClientImpl) close() {
 	c.Close()
 	logrus.Info("Client closed")
 }

@@ -9,16 +9,16 @@ import (
 	"time"
 )
 
-type RealtimeMarketClient interface {
-	Close()
+type realtimeMarketClient interface {
+	close()
 }
 
-type RealtimeMarketClientImpl struct {
+type realtimeMarketClientImpl struct {
 	*binanceMarketWebsocket.SpotAllMarketMiniTickerWebsocketClient
 }
 
-func NewBinanceRealtimeMarketClient(config internal.AppConfig) (RealtimeMarketClient, error) {
-	client := RealtimeMarketClientImpl{
+func newBinanceRealtimeMarketClient(config internal.AppConfig) (realtimeMarketClient, error) {
+	client := realtimeMarketClientImpl{
 		SpotAllMarketMiniTickerWebsocketClient: newSpotAllMarketMiniTickerWebsocketClient(config.HostWss, "!miniTicker@arr"),
 	}
 
@@ -54,7 +54,7 @@ func newSpotAllMarketMiniTickerWebsocketClient(host string, streams ...string) *
 	return c
 }
 
-func (c RealtimeMarketClientImpl) Close() {
+func (c realtimeMarketClientImpl) close() {
 	c.Close()
 	logrus.Info("Client closed")
 }

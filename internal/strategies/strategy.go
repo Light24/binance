@@ -6,13 +6,13 @@ import (
 )
 
 type strategyImpl struct {
-	binanceClient binance.BinanceClient
+	binanceManager binance.Manager
 	config        internal.AppConfig
 }
 
-func NewStrategy(binanceClient binance.BinanceClient, config internal.AppConfig) *strategyImpl {
+func NewStrategy(binanceManager binance.Manager, config internal.AppConfig) *strategyImpl {
 	return &strategyImpl{
-		binanceClient: binanceClient,
-		config: config,
+		binanceManager,
+		config,
 	}
 }

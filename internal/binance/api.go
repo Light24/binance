@@ -13,34 +13,34 @@ import (
 	"time"
 )
 
-type BinanceClient interface {
-	// GetAccountInfo -
-	GetAccountInfo() (*binanceSpot.AccountInfoResponse, error)
-	// SAPITradeFee - get_trade_fee
-	SAPITradeFee(symbol string) (*binanceSpot.SAPITradeFeeResponse, error)
-	// GetBnbBurn - get_bnb_burn_spot_margin
-	GetBnbBurn() (*GetBnbBurnResponse, error)
-	// GetSymbolTickerPrice -
-	GetSymbolTickerPrice(symbol string) (*binanceSpot.SymbolPriceTickerResponse, error)
-	// GetExchangeInfo -
-	GetExchangeInfo() (*binanceSpot.ExchangeInfoResponse, error)
-	// NewOrder -
-	NewOrder(symbol, side, orderType, timeInForce, newClientOderID, newOrderRespType string, quantity, quoteOrderQTY, price, stopPrice, icebergQTY decimal.Decimal) (interface{}, error)
-	// NewOCO -
-	NewOCO(symbol, listClientOrderID, side, limitClientOrderId, stopClientOrderId, stopLimitTimeInForce, newOrderRespType string, quantity, price, limitIcebergQty, stopPrice, stopLimitPrice, stopIcebergQty decimal.Decimal) (*binanceSpot.NewOCOOrderResponse, error)
-	// DeleteOrder -
-	DeleteOrder(symbol, origClientOrderID, newClientOrderID string, orderID int64) (*binanceSpot.DeleteOrderResponse, error)
+type apiClient interface {
+	// getAccountInfo -
+	getAccountInfo() (*binanceSpot.AccountInfoResponse, error)
+	// sapiTradeFee - get_trade_fee
+	sapiTradeFee(symbol string) (*binanceSpot.SAPITradeFeeResponse, error)
+	// getBnbBurn - get_bnb_burn_spot_margin
+	getBnbBurn() (*GetBnbBurnResponse, error)
+	// getSymbolTickerPrice -
+	getSymbolTickerPrice(symbol string) (*binanceSpot.SymbolPriceTickerResponse, error)
+	// getExchangeInfo -
+	getExchangeInfo() (*binanceSpot.ExchangeInfoResponse, error)
+	// newOrder -
+	newOrder(symbol, side, orderType, timeInForce, newClientOderID, newOrderRespType string, quantity, quoteOrderQTY, price, stopPrice, icebergQTY decimal.Decimal) (interface{}, error)
+	// newOCO -
+	newOCO(symbol, listClientOrderID, side, limitClientOrderId, stopClientOrderId, stopLimitTimeInForce, newOrderRespType string, quantity, price, limitIcebergQty, stopPrice, stopLimitPrice, stopIcebergQty decimal.Decimal) (*binanceSpot.NewOCOOrderResponse, error)
+	// deleteOrder -
+	deleteOrder(symbol, origClientOrderID, newClientOrderID string, orderID int64) (*binanceSpot.DeleteOrderResponse, error)
 }
 
-type binanceClientImpl struct {
+type apiClientImpl struct {
 	*binanceSpot.WalletClient
 	*binanceSpot.TradeClient
 	*binanceSpot.MarketClient
 	recvTimeout time.Duration
 }
 
-func NewBinanceClient(config internal.AppConfig) BinanceClient {
-	return &binanceClientImpl{
+func newApiClient(config internal.AppConfig) apiClient {
+	return &apiClientImpl{
 		WalletClient: binanceSpot.NewWalletClient(config.HostRest, config.ApiKey, config.ApiSecret),
 		TradeClient:  binanceSpot.NewTradeClient(config.HostRest, config.ApiKey, config.ApiSecret),
 		MarketClient: binanceSpot.NewMarketClient(config.HostRest, config.ApiKey),
@@ -48,7 +48,7 @@ func NewBinanceClient(config internal.AppConfig) BinanceClient {
 	}
 }
 
-func (c *binanceClientImpl) GetAccountInfo() (*binanceSpot.AccountInfoResponse, error) {
+func (c *apiClientImpl) getAccountInfo() (*binanceSpot.AccountInfoResponse, error) {
 	interfaceResp, err := c.TradeClient.GetAccountInfo(c.recvTimeout)
 	if err != nil {
 		return nil, err
@@ -60,7 +60,7 @@ func (c *binanceClientImpl) GetAccountInfo() (*binanceSpot.AccountInfoResponse, 
 	return &resp, nil
 }
 
-func (c *binanceClientImpl) SAPITradeFee(symbol string) (*binanceSpot.SAPITradeFeeResponse, error) {
+func (c *apiClientImpl) sapiTradeFee(symbol string) (*binanceSpot.SAPITradeFeeResponse, error) {
 	interfaceResp, err := c.WalletClient.SAPITradeFee(symbol, c.recvTimeout)
 	if err != nil {
 		return nil, err
@@ -72,8 +72,8 @@ func (c *binanceClientImpl) SAPITradeFee(symbol string) (*binanceSpot.SAPITradeF
 	return &resp, nil
 }
 
-func (c *binanceClientImpl) GetBnbBurn() (*GetBnbBurnResponse, error) {
-	interfaceResp, err := c.GetBnbBurnImpl(c.recvTimeout)
+func (c *apiClientImpl) getBnbBurn() (*GetBnbBurnResponse, error) {
+	interfaceResp, err := c.getBnbBurnImpl(c.recvTimeout)
 	if err != nil {
 		return nil, err
 	} else if resp, ok := interfaceResp.(model.APIErrorResponse); ok {
@@ -84,7 +84,7 @@ func (c *binanceClientImpl) GetBnbBurn() (*GetBnbBurnResponse, error) {
 	return resp, nil
 }
 
-func (c *binanceClientImpl) GetSymbolTickerPrice(symbol string) (*binanceSpot.SymbolPriceTickerResponse, error) {
+func (c *apiClientImpl) getSymbolTickerPrice(symbol string) (*binanceSpot.SymbolPriceTickerResponse, error) {
 	interfaceResp, err := c.MarketClient.GetSymbolTickerPrice(symbol)
 	if err != nil {
 		return nil, err
@@ -96,7 +96,7 @@ func (c *binanceClientImpl) GetSymbolTickerPrice(symbol string) (*binanceSpot.Sy
 	return &resp, nil
 }
 
-func (c *binanceClientImpl) GetExchangeInfo() (*binanceSpot.ExchangeInfoResponse, error) {
+func (c *apiClientImpl) getExchangeInfo() (*binanceSpot.ExchangeInfoResponse, error) {
 	interfaceResp, err := c.MarketClient.GetExchangeInfo()
 	if err != nil {
 		return nil, err
@@ -108,7 +108,7 @@ func (c *binanceClientImpl) GetExchangeInfo() (*binanceSpot.ExchangeInfoResponse
 	return &resp, nil
 }
 
-func (c *binanceClientImpl) NewOrder(symbol, side, orderType, timeInForce, newClientOderID, newOrderRespType string, quantity, quoteOrderQTY, price, stopPrice, icebergQTY decimal.Decimal) (interface{}, error) {
+func (c *apiClientImpl) newOrder(symbol, side, orderType, timeInForce, newClientOderID, newOrderRespType string, quantity, quoteOrderQTY, price, stopPrice, icebergQTY decimal.Decimal) (interface{}, error) {
 	interfaceResp, err := c.TradeClient.NewOrder(symbol, side, orderType, timeInForce, newClientOderID, newOrderRespType, quantity, quoteOrderQTY, price, stopPrice, icebergQTY, c.recvTimeout)
 	if err != nil {
 		return nil, err
@@ -127,7 +127,7 @@ func (c *binanceClientImpl) NewOrder(symbol, side, orderType, timeInForce, newCl
 	return nil, errors.Errorf("Imposibble situations: %v", interfaceResp)
 }
 
-func (c *binanceClientImpl) NewOCO(symbol, listClientOrderID, side, limitClientOrderId, stopClientOrderId, stopLimitTimeInForce, newOrderRespType string, quantity, price, limitIcebergQty, stopPrice, stopLimitPrice, stopIcebergQty decimal.Decimal) (*binanceSpot.NewOCOOrderResponse, error) {
+func (c *apiClientImpl) newOCO(symbol, listClientOrderID, side, limitClientOrderId, stopClientOrderId, stopLimitTimeInForce, newOrderRespType string, quantity, price, limitIcebergQty, stopPrice, stopLimitPrice, stopIcebergQty decimal.Decimal) (*binanceSpot.NewOCOOrderResponse, error) {
 	interfaceResp, err := c.TradeClient.NewOCO(symbol, listClientOrderID, side, limitClientOrderId, stopClientOrderId, stopLimitTimeInForce, newOrderRespType, quantity, price, limitIcebergQty, stopPrice, stopLimitPrice, stopIcebergQty, c.recvTimeout)
 	if err != nil {
 		return nil, err
@@ -139,7 +139,7 @@ func (c *binanceClientImpl) NewOCO(symbol, listClientOrderID, side, limitClientO
 	return &resp, nil
 }
 
-func (c *binanceClientImpl) DeleteOrder(symbol, origClientOrderID, newClientOrderID string, orderID int64) (*binanceSpot.DeleteOrderResponse, error) {
+func (c *apiClientImpl) deleteOrder(symbol, origClientOrderID, newClientOrderID string, orderID int64) (*binanceSpot.DeleteOrderResponse, error) {
 	interfaceResp, err := c.TradeClient.DeleteOrder(symbol, origClientOrderID, newClientOrderID, orderID, c.recvTimeout)
 	if err != nil {
 		return nil, err
@@ -159,7 +159,7 @@ type GetBnbBurnResponse struct {
 	InterestBNBBurn bool `json:"interestBNBBurn"`
 }
 
-func (c *binanceClientImpl) GetBnbBurnImpl(recv time.Duration) (interface{}, error) {
+func (c *apiClientImpl) getBnbBurnImpl(recv time.Duration) (interface{}, error) {
 	var err error
 	req, err := c.WalletClient.Builder.Build(http.MethodGet, "/sapi/v1/bnbBurn", "", true, true, recv)
 	if err != nil {

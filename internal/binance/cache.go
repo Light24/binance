@@ -8,17 +8,17 @@ import (
 	"time"
 )
 
-type CacheClient interface {
+type cacheClient interface {
 }
 
 type cacheClientImpl struct {
-	RealtimeAccountClient
-	RealtimeBalanceClient
-	RealtimeMarketClient
-	RealtimeOrderClient
+	realtimeAccountClient
+	realtimeBalanceClient
+	realtimeMarketClient
+	realtimeOrderClient
 }
 
-func NewCacheClient(config internal.AppConfig, stop chan interface{}) (CacheClient, error) {
+func newCacheClient(config internal.AppConfig, stop chan interface{}) (cacheClient, error) {
 	listenKeyBuilder := binanceAccountWebsocket.NewListenKeyBuilder(config.HostRest, config.ApiKey, config.ApiSecret)
 	key, err := listenKeyBuilder.CreateSpotListenKey()
 	if err != nil {
@@ -27,22 +27,22 @@ func NewCacheClient(config internal.AppConfig, stop chan interface{}) (CacheClie
 		return nil, err
 	}
 
-	accountClient, err := NewBinanceRealtimeAccountClient(config, key)
+	accountClient, err := newBinanceRealtimeAccountClient(config, key)
 	if err != nil {
 		return nil, err
 	}
 
-	balanceClient, err := NewBinanceRealtimeBalanceClient(config, key)
+	balanceClient, err := newBinanceRealtimeBalanceClient(config, key)
 	if err != nil {
 		return nil, err
 	}
 
-	marketClient, err := NewBinanceRealtimeMarketClient(config)
+	marketClient, err := newBinanceRealtimeMarketClient(config)
 	if err != nil {
 		return nil, err
 	}
 
-	orderClient, err := NewBinanceRealtimeOrderClient(config, key)
+	orderClient, err := newBinanceRealtimeOrderClient(config, key)
 	if err != nil {
 		return nil, err
 	}
@@ -51,10 +51,10 @@ func NewCacheClient(config internal.AppConfig, stop chan interface{}) (CacheClie
 		for {
 			select {
 			case <-stop:
-				accountClient.Close()
-				balanceClient.Close()
-				marketClient.Close()
-				orderClient.Close()
+				accountClient.close()
+				balanceClient.close()
+				marketClient.close()
+				orderClient.close()
 				logrus.Info("Client closed")
 				return
 			case <-time.After(10 * time.Minute):

@@ -5,6 +5,7 @@ import (
 	"binance-trade-bot/internal/strategies"
 	"github.com/sirupsen/logrus"
 	"gopkg.in/natefinch/lumberjack.v2"
+	"time"
 
 	"binance-trade-bot/internal"
 )
@@ -27,15 +28,21 @@ func main() {
 
 	config := internal.InitConfig()
 	binanceClient := binance.NewBinanceClient(config)
-	binanceRealtimeClient := binance.NewBinanceRealtimeClient(config, chanStop)
-
 	accountInfo, err := binanceClient.GetAccountInfo()
 	if err != nil {
 		logrus.Fatal("Couldn't access Binance API - API keys may be wrong or lack sufficient permissions [error: %v]", err)
 	}
+	logrus.Info(accountInfo)
+
+	binanceRealtimeClient, err := binance.NewCacheClient(config, chanStop)
+	if err != nil {
+		logrus.Fatal("Couldn't access Socket API -  [error: %v]", err)
+	}
+
 	_ = accountInfo
 
 	_ = binanceRealtimeClient
 
 	strategies.NewStrategy(binanceClient, config)
+	time.Sleep(time.Hour)
 }

@@ -2,7 +2,6 @@ package binance
 
 import (
 	"binance-trade-bot/internal"
-	binanceConfig "github.com/dirname/binance/config"
 	"github.com/dirname/binance/model"
 	binanceMarketWebsocket "github.com/dirname/binance/spot/websocket/market"
 	spotclient "github.com/dirname/binance/spot/websocket/market"
@@ -11,22 +10,16 @@ import (
 )
 
 type RealtimeMarketClient interface {
+	Close()
 }
 
 type RealtimeMarketClientImpl struct {
 	*binanceMarketWebsocket.SpotAllMarketMiniTickerWebsocketClient
-	stop chan interface{}
 }
 
-func NewBinanceRealtimeMarketClient(config internal.AppConfig, stop chan interface{}) (RealtimeMarketClient, error) {
-	hostWss := binanceConfig.SpotRestHost
-	if config.TestNet {
-		hostWss = "testnet.binance.vision"
-	}
-
+func NewBinanceRealtimeMarketClient(config internal.AppConfig) (RealtimeMarketClient, error) {
 	client := RealtimeMarketClientImpl{
-		SpotAllMarketMiniTickerWebsocketClient: newSpotAllMarketMiniTickerWebsocketClient(hostWss, "!miniTicker@arr"),
-		stop:                                   stop,
+		SpotAllMarketMiniTickerWebsocketClient: newSpotAllMarketMiniTickerWebsocketClient(config.HostWss, "!miniTicker@arr"),
 	}
 
 	client.SetReadTimerInterval(2 * time.Second)
@@ -51,17 +44,6 @@ func NewBinanceRealtimeMarketClient(config internal.AppConfig, stop chan interfa
 		}
 	})
 	client.Connect(true)
-	// client.SetPingHandler(nil)
-	// client.SetPongHandler(nil)
-
-	go func() {
-		select {
-		case <-client.stop:
-			//client.Unsubscribe(2, "!miniTicker@arr")
-			client.Close()
-			logrus.Info("Client closed")
-		}
-	}()
 
 	return client, nil
 }
@@ -70,4 +52,9 @@ func newSpotAllMarketMiniTickerWebsocketClient(host string, streams ...string) *
 	c := new(binanceMarketWebsocket.SpotAllMarketMiniTickerWebsocketClient)
 	c.WebsocketClient.Init(host, streams...)
 	return c
+}
+
+func (c RealtimeMarketClientImpl) Close() {
+	c.Close()
+	logrus.Info("Client closed")
 }

@@ -4,7 +4,6 @@ import (
 	"binance-trade-bot/internal"
 	"encoding/json"
 	"github.com/dirname/binance"
-	binanceConfig "github.com/dirname/binance/config"
 	binanceLogger "github.com/dirname/binance/logging"
 	"github.com/dirname/binance/model"
 	binanceSpot "github.com/dirname/binance/spot/client"
@@ -41,15 +40,10 @@ type binanceClientImpl struct {
 }
 
 func NewBinanceClient(config internal.AppConfig) BinanceClient {
-	host := binanceConfig.SpotRestHost
-	if config.TestNet {
-		host = "testnet.binance.vision"
-	}
-
 	return &binanceClientImpl{
-		WalletClient: binanceSpot.NewWalletClient(host, config.ApiKey, config.ApiSecret),
-		TradeClient:  binanceSpot.NewTradeClient(host, config.ApiKey, config.ApiSecret),
-		MarketClient: binanceSpot.NewMarketClient(host, config.ApiKey),
+		WalletClient: binanceSpot.NewWalletClient(config.HostRest, config.ApiKey, config.ApiSecret),
+		TradeClient:  binanceSpot.NewTradeClient(config.HostRest, config.ApiKey, config.ApiSecret),
+		MarketClient: binanceSpot.NewMarketClient(config.HostRest, config.ApiKey),
 		recvTimeout:  config.RecvTimeout,
 	}
 }

@@ -1,9 +1,13 @@
 package internal
 
-import "time"
+import (
+	binanceConfig "github.com/dirname/binance/config"
+	"time"
+)
 
 type AppConfig struct {
-	TestNet     bool
+	HostRest    string
+	HostWss     string
 	ApiKey      string
 	ApiSecret   string
 	RecvTimeout time.Duration
@@ -13,10 +17,15 @@ type AppConfig struct {
 
 func InitConfig() AppConfig {
 	var appConfig AppConfig
-	appConfig.TestNet = true
 	appConfig.ApiKey = "lgtrEDSGBbFm3eEoQL6oCrCNXRaWzAGJL4jAdvZIrtqqApWaBMKfW7WDnObIhGAt"
 	appConfig.ApiSecret = "qrw3iV9BynFEdwrMmmP4vkvusWeLCv1fC6O50veodZ5gBRZ4uKFBNoYeVn2v0Xpz"
-	appConfig.RecvTimeout = 5000 // 5 * time.Second
+	appConfig.RecvTimeout = 10 * time.Second
+
+	testNet := true
+	appConfig.HostRest, appConfig.HostWss = binanceConfig.SpotRestHost, binanceConfig.SpotWssHost
+	if testNet {
+		appConfig.HostRest, appConfig.HostWss = "testnet.binance.vision", "testnet.binance.vision"
+	}
 
 	appConfig.strategy = "default"
 

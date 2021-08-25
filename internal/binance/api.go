@@ -17,11 +17,11 @@ type apiClient interface {
 	// getAccountInfo -
 	getAccountInfo() (*binanceSpot.AccountInfoResponse, error)
 	// sapiTradeFee - get_trade_fee
-	sapiTradeFee(symbol string) (*binanceSpot.SAPITradeFeeResponse, error)
+	sapiTradeFee(symbol string) (binanceSpot.SAPITradeFeeResponse, error)
 	// getBnbBurn - get_bnb_burn_spot_margin
 	getBnbBurn() (*GetBnbBurnResponse, error)
 	// getSymbolTickerPrice -
-	getSymbolTickerPrice(symbol string) (*binanceSpot.SymbolPriceTickerResponse, error)
+	getSymbolTickerPrice(symbol string) ([]binanceSpot.SymbolPriceTickerResponse, error)
 	// getExchangeInfo -
 	getExchangeInfo() (*binanceSpot.ExchangeInfoResponse, error)
 	// newOrder -
@@ -60,7 +60,7 @@ func (c *apiClientImpl) getAccountInfo() (*binanceSpot.AccountInfoResponse, erro
 	return &resp, nil
 }
 
-func (c *apiClientImpl) sapiTradeFee(symbol string) (*binanceSpot.SAPITradeFeeResponse, error) {
+func (c *apiClientImpl) sapiTradeFee(symbol string) (binanceSpot.SAPITradeFeeResponse, error) {
 	interfaceResp, err := c.WalletClient.SAPITradeFee(symbol, c.recvTimeout)
 	if err != nil {
 		return nil, err
@@ -69,7 +69,7 @@ func (c *apiClientImpl) sapiTradeFee(symbol string) (*binanceSpot.SAPITradeFeeRe
 	}
 
 	resp := interfaceResp.(binanceSpot.SAPITradeFeeResponse)
-	return &resp, nil
+	return resp, nil
 }
 
 func (c *apiClientImpl) getBnbBurn() (*GetBnbBurnResponse, error) {
@@ -84,7 +84,7 @@ func (c *apiClientImpl) getBnbBurn() (*GetBnbBurnResponse, error) {
 	return resp, nil
 }
 
-func (c *apiClientImpl) getSymbolTickerPrice(symbol string) (*binanceSpot.SymbolPriceTickerResponse, error) {
+func (c *apiClientImpl) getSymbolTickerPrice(symbol string) ([]binanceSpot.SymbolPriceTickerResponse, error) {
 	interfaceResp, err := c.MarketClient.GetSymbolTickerPrice(symbol)
 	if err != nil {
 		return nil, err
@@ -92,8 +92,16 @@ func (c *apiClientImpl) getSymbolTickerPrice(symbol string) (*binanceSpot.Symbol
 		return nil, errors.Errorf("Error: %s with code %d", resp.Message, resp.Code)
 	}
 
-	resp := interfaceResp.(binanceSpot.SymbolPriceTickerResponse)
-	return &resp, nil
+	var resp []binanceSpot.SymbolPriceTickerResponse
+	if symbolPriceTicker, ok := interfaceResp.(binanceSpot.SymbolPriceTickerResponse); ok {
+		resp = append(resp, symbolPriceTicker)
+	} else {
+		if symbolPriceTicker, ok := interfaceResp.([]binanceSpot.SymbolPriceTickerResponse); ok {
+			resp = symbolPriceTicker
+		}
+	}
+
+	return resp, nil
 }
 
 func (c *apiClientImpl) getExchangeInfo() (*binanceSpot.ExchangeInfoResponse, error) {

@@ -43,9 +43,12 @@ func New(config internal.AppConfig, chanStop chan interface{}) (Manager, error) 
 		return nil, err
 	}
 
-	cache, err := newCacheClient(config, chanStop)
-	if err != nil {
-		logrus.Fatal("Couldn't access Socket API -  [error: %v]", err)
+	var cache cacheClient
+	if config.UseRealtime {
+		cache, err = newCacheClient(config, chanStop)
+		if err != nil {
+			logrus.Fatal("Couldn't access Socket API -  [error: %v]", err)
+		}
 	}
 
 	return ManagerImpl{

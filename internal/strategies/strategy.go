@@ -31,6 +31,9 @@ func NewStrategy(binanceManager binance.Manager, config internal.AppConfig) Stra
 
 // Scout - Scout for potential jumps from the current coin to another coin
 func (strategy *strategyImpl) Scout() error {
+	account, err := strategy.binanceManager.GetAccount()
+	logrus.Info(account)
+
 	currentSymbol, err := strategy.binanceManager.GetCurrentCoin()
 	if err != nil {
 		return err

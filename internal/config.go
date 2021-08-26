@@ -11,6 +11,7 @@ type AppConfig struct {
 	ApiKey      string
 	ApiSecret   string
 	RecvTimeout time.Duration
+	UseRealtime bool
 
 	strategy        string
 	Bridge          string
@@ -22,6 +23,7 @@ func InitConfig() AppConfig {
 	appConfig.ApiKey = "lgtrEDSGBbFm3eEoQL6oCrCNXRaWzAGJL4jAdvZIrtqqApWaBMKfW7WDnObIhGAt"
 	appConfig.ApiSecret = "qrw3iV9BynFEdwrMmmP4vkvusWeLCv1fC6O50veodZ5gBRZ4uKFBNoYeVn2v0Xpz"
 	appConfig.RecvTimeout = 10 * time.Second
+	appConfig.UseRealtime = false
 
 	testNet := true
 	appConfig.HostRest, appConfig.HostWss = binanceConfig.SpotRestHost, binanceConfig.SpotWssHost

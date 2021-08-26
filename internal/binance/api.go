@@ -43,12 +43,27 @@ type apiClientImpl struct {
 }
 
 func newApiClient(config internal.AppConfig) apiClient {
-	return &apiClientImpl{
+	client := &apiClientImpl{
 		WalletClient: binanceSpot.NewWalletClient(config.HostRest, config.ApiKey, config.ApiSecret),
 		TradeClient:  binanceSpot.NewTradeClient(config.HostRest, config.ApiKey, config.ApiSecret),
 		MarketClient: binanceSpot.NewMarketClient(config.HostRest, config.ApiKey),
 		recvTimeout:  config.RecvTimeout,
 	}
+
+
+	res, err := client.WalletClient.SAPIAccountAPIStatus(config.RecvTimeout)
+	_, _ = res, err
+
+	res2, err2 := client.WalletClient.SAPITradeFee("", config.RecvTimeout)
+	_, _ = res2, err2
+
+	res3, err3 := client.getBnbBurn()
+	_, _ = res3, err3
+
+	res4, err4 := client.getAccountInfo()
+	_, _ = res4, err4
+
+	return client
 }
 
 func (c *apiClientImpl) getAccountInfo() (*binanceSpot.AccountInfoResponse, error) {

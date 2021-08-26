@@ -20,11 +20,15 @@ type Manager interface {
 	GetUsingBnbForFees() (bool, error)
 	GetCurrencyBalance(symbol string /*, forceNotCache bool*/) (float64, error)
 	GetAltTick(originSymbol string, targetSymbol string) (int, error)
+	GetMinNotional(originSymbol string, targetSymbol string) (float64, error)
 	GetSymbolFilter(originSymbol string, targetSymbol string, filterType string) (map[string]interface{}, error)
 	SellQuantity(originSymbol string, targetSymbol string, originBalance float64) (float64, error)
 	BuyQuantity(originSymbol string, targetSymbol string, targetBalance float64, fromCoinPrice float64) (float64, error)
 	BuyAlt(originSymbol string, targetSymbol string) (*binanceSpot.NewOrderResponseResult, error)
 	SellAlt(originSymbol string, targetSymbol string) (*binanceSpot.NewOrderResponseResult, error)
+
+	GetCurrentCoin() (string, error)
+	GetSupportedSymbols() (map[string]interface{}, error)
 }
 
 type ManagerImpl struct {
@@ -137,7 +141,7 @@ func (manager ManagerImpl) GetFee(originSymbol string, targetSymbol string, sell
 			return 0, err
 		} else if originPrice == 0 {
 			feeAmountFloat64, _ := feeAmount.Float64()
-			errors.Errorf("GetTickerPrice for %s is 0", originSymbol+"BNB")
+			logrus.Errorf("GetTickerPrice for %s is 0", originSymbol+"BNB")
 			return feeAmountFloat64, nil
 		}
 
@@ -201,11 +205,36 @@ func (manager ManagerImpl) GetAltTick(originSymbol string, targetSymbol string) 
 	}
 
 	stepSize, ok := stepSizeInterface.(string)
+	if !ok {
+		err := errors.Errorf("stepSizeInterface can't convert to string")
+		return 0, err
+	}
+
 	if 0 == strings.Index(stepSize, "1") {
 		return 1 - strings.Index(stepSize, "."), nil
 	}
-
 	return strings.Index(stepSize, "1") - 1, nil
+}
+
+func (manager ManagerImpl) GetMinNotional(originSymbol string, targetSymbol string) (float64, error) {
+	filter, err := manager.GetSymbolFilter(originSymbol, targetSymbol, "MIN_NOTIONAL")
+	if err != nil {
+		return 0, err
+	}
+
+	minNotionalInterface, ok := filter["minNotional"]
+	if !ok {
+		err := errors.Errorf("GetAltTick stepSize is not defined")
+		return 0, err
+	}
+
+	minNotional, ok := minNotionalInterface.(float64)
+	if !ok {
+		err := errors.Errorf("minNotionalInterface can't convert to float64")
+		return 0, err
+	}
+
+	return minNotional, nil
 }
 
 func (manager ManagerImpl) GetSymbolFilter(originSymbol string, targetSymbol string, filterType string) (map[string]interface{}, error) {
@@ -330,4 +359,49 @@ func (manager ManagerImpl) SellAlt(originSymbol string, targetSymbol string) (*b
 		decimal.NewFromFloat(orderQuantity), decimal.Decimal{}, decimal.NewFromFloat(fromCoinPrice), decimal.Decimal{}, decimal.Decimal{})
 
 	return resp, nil
+}
+
+func (manager ManagerImpl) GetCurrentCoin() (string, error) {
+	resp, err := manager.api.getAccountInfo()
+	if err != nil {
+		logrus.Errorf("getAccountInfo %v", err)
+		return "", err
+	}
+
+	var symbolForMaxFree string
+	var maxFree float64
+	for key := range resp.Balances {
+		balance := resp.Balances[key]
+		currentMaxFree, err := strconv.ParseFloat(balance.Free, 64)
+		if err != nil {
+			logrus.Errorf("ParseFloat for fee in %v with error %v", balance, err)
+			return "", err
+		}
+
+		if currentMaxFree >= maxFree {
+			symbolForMaxFree = balance.Asset
+			maxFree = currentMaxFree
+		}
+	}
+
+	return symbolForMaxFree, nil
+}
+
+// GetSupportedSymbols - return all possible symbols
+func (manager ManagerImpl) GetSupportedSymbols() (map[string]interface{}, error) {
+	resp, err := manager.api.getExchangeInfo()
+	if err != nil {
+		err = errors.Errorf("GetSymbolFilter error %v", err)
+		return nil, err
+	}
+
+	var supportedSymbols = make(map[string]interface{})
+	for _, symbol := range resp.Symbols {
+		if symbol.IsSpotTradingAllowed {
+			supportedSymbols[symbol.BaseAsset] = nil
+			supportedSymbols[symbol.QuoteAsset] = nil
+		}
+	}
+
+	return supportedSymbols, nil
 }

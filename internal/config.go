@@ -12,7 +12,9 @@ type AppConfig struct {
 	ApiSecret   string
 	RecvTimeout time.Duration
 
-	strategy string
+	strategy        string
+	Bridge          string
+	ScoutMultiplier float64
 }
 
 func InitConfig() AppConfig {
@@ -28,6 +30,8 @@ func InitConfig() AppConfig {
 	}
 
 	appConfig.strategy = "default"
+	appConfig.Bridge = "USDT"
+	appConfig.ScoutMultiplier = 5
 
 	return appConfig
 }

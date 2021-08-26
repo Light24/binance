@@ -32,12 +32,16 @@ func main() {
 		logrus.Fatal("Couldn't access Binance API - API keys may be wrong or lack sufficient permissions [error: %v]", err)
 	}
 
-	binanceManager.GetAltTick("BNB", "USDT")
+	/*
+		binanceManager.GetAltTick("BNB", "USDT")
+		binanceManager.GetTradeFees()
+		binanceManager.GetTickerPrice("")
+		binanceManager.GetAccount()
+	*/
 
-	binanceManager.GetTradeFees()
-	binanceManager.GetTickerPrice("")
-	binanceManager.GetAccount()
-
-	strategies.NewStrategy(binanceManager, config)
-	time.Sleep(time.Hour)
+	strategy := strategies.NewStrategy(binanceManager, config)
+	for {
+		strategy.Scout()
+		time.Sleep(500 * time.Millisecond)
+	}
 }

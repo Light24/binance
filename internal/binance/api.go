@@ -7,6 +7,7 @@ import (
 	binanceLogger "github.com/dirname/binance/logging"
 	"github.com/dirname/binance/model"
 	binanceSpot "github.com/dirname/binance/spot/client"
+	binanceSpotOrderRespType "github.com/dirname/binance/spot/client/orderRespType"
 	"github.com/pkg/errors"
 	"github.com/shopspring/decimal"
 	"net/http"
@@ -26,6 +27,8 @@ type apiClient interface {
 	getExchangeInfo() (*binanceSpot.ExchangeInfoResponse, error)
 	// newOrder -
 	newOrder(symbol, side, orderType, timeInForce, newClientOderID, newOrderRespType string, quantity, quoteOrderQTY, price, stopPrice, icebergQTY decimal.Decimal) (interface{}, error)
+	// newOrder -
+	newOrderFull(symbol, side, orderType, timeInForce, newClientOderID string, quantity, quoteOrderQTY, price, stopPrice, icebergQTY decimal.Decimal) (*binanceSpot.NewOrderResponseResult, error)
 	// newOCO -
 	newOCO(symbol, listClientOrderID, side, limitClientOrderId, stopClientOrderId, stopLimitTimeInForce, newOrderRespType string, quantity, price, limitIcebergQty, stopPrice, stopLimitPrice, stopIcebergQty decimal.Decimal) (*binanceSpot.NewOCOOrderResponse, error)
 	// deleteOrder -
@@ -133,6 +136,21 @@ func (c *apiClientImpl) newOrder(symbol, side, orderType, timeInForce, newClient
 	}
 
 	return nil, errors.Errorf("Imposibble situations: %v", interfaceResp)
+}
+
+func (c *apiClientImpl) newOrderFull(symbol, side, orderType, timeInForce, newClientOderID string, quantity, quoteOrderQTY, price, stopPrice, icebergQTY decimal.Decimal) (*binanceSpot.NewOrderResponseResult, error) {
+	respInterface, err := c.newOrder(symbol, side, orderType, timeInForce, newClientOderID, binanceSpotOrderRespType.Full, quantity, quoteOrderQTY, price, stopPrice, icebergQTY)
+	if err != nil {
+		return nil, err
+	}
+
+	resp, ok := respInterface.(binanceSpot.NewOrderResponseResult)
+	if !ok {
+		err := errors.Errorf("Unable get resp %v", resp)
+		return nil, err
+	}
+
+	return &resp, nil
 }
 
 func (c *apiClientImpl) newOCO(symbol, listClientOrderID, side, limitClientOrderId, stopClientOrderId, stopLimitTimeInForce, newOrderRespType string, quantity, price, limitIcebergQty, stopPrice, stopLimitPrice, stopIcebergQty decimal.Decimal) (*binanceSpot.NewOCOOrderResponse, error) {

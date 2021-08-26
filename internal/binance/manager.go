@@ -3,7 +3,6 @@ package binance
 import (
 	"binance-trade-bot/internal"
 	binanceSpot "github.com/dirname/binance/spot/client"
-	binanceSpotOrderRespType "github.com/dirname/binance/spot/client/orderRespType"
 	binanceSpotOrderSide "github.com/dirname/binance/spot/client/orderSide"
 	"github.com/pkg/errors"
 	"github.com/shopspring/decimal"
@@ -24,7 +23,7 @@ type Manager interface {
 	GetSymbolFilter(originSymbol string, targetSymbol string, filterType string) (map[string]interface{}, error)
 	SellQuantity(originSymbol string, targetSymbol string, originBalance float64) (float64, error)
 	BuyQuantity(originSymbol string, targetSymbol string, targetBalance float64, fromCoinPrice float64) (float64, error)
-	BuyAlt(originSymbol string, targetSymbol string) (*binanceSpot.NewOCOOrderResponse, error)
+	BuyAlt(originSymbol string, targetSymbol string) (*binanceSpot.NewOrderResponseResult, error)
 	SellAlt(originSymbol string, targetSymbol string) (*binanceSpot.NewOrderResponseResult, error)
 }
 
@@ -283,7 +282,7 @@ func (manager ManagerImpl) BuyQuantity(originSymbol string, targetSymbol string,
 }
 
 // BuyAlt - buy alt coin
-func (manager ManagerImpl) BuyAlt(originSymbol string, targetSymbol string) (*binanceSpot.NewOCOOrderResponse, error) {
+func (manager ManagerImpl) BuyAlt(originSymbol string, targetSymbol string) (*binanceSpot.NewOrderResponseResult, error) {
 	originBalance, err := manager.GetCurrencyBalance(originSymbol)
 	if err != nil {
 		return nil, err
@@ -304,9 +303,10 @@ func (manager ManagerImpl) BuyAlt(originSymbol string, targetSymbol string) (*bi
 		return nil, err
 	}
 
-	return manager.api.newOCO(originSymbol+targetSymbol, "", binanceSpotOrderSide.Buy, "", "",
-		"", "", decimal.NewFromFloat(orderQuantity), decimal.NewFromFloat(fromCoinPrice),
-		decimal.Decimal{}, decimal.Decimal{}, decimal.Decimal{}, decimal.Decimal{})
+	resp, err := manager.api.newOrderFull(originSymbol+targetSymbol, binanceSpotOrderSide.Buy, "", "", "",
+		decimal.NewFromFloat(orderQuantity), decimal.Decimal{}, decimal.NewFromFloat(fromCoinPrice), decimal.Decimal{}, decimal.Decimal{})
+
+	return resp, nil
 }
 
 // SellAlt - sell alt coin
@@ -326,18 +326,8 @@ func (manager ManagerImpl) SellAlt(originSymbol string, targetSymbol string) (*b
 		return nil, err
 	}
 
-	respInterface, err := manager.api.newOrder(originSymbol+targetSymbol, binanceSpotOrderSide.Sell, "", "", "",
-		binanceSpotOrderRespType.Full, decimal.NewFromFloat(orderQuantity), decimal.Decimal{}, decimal.NewFromFloat(fromCoinPrice),
-		decimal.Decimal{}, decimal.Decimal{})
-	if err != nil {
-		return nil, err
-	}
+	resp, err := manager.api.newOrderFull(originSymbol+targetSymbol, binanceSpotOrderSide.Sell, "", "", "",
+		decimal.NewFromFloat(orderQuantity), decimal.Decimal{}, decimal.NewFromFloat(fromCoinPrice), decimal.Decimal{}, decimal.Decimal{})
 
-	resp, ok := respInterface.(binanceSpot.NewOrderResponseResult)
-	if !ok {
-		err := errors.Errorf("Unable get resp %v", resp)
-		return nil, err
-	}
-
-	return &resp, nil
+	return resp, nil
 }

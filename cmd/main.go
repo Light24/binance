@@ -26,7 +26,7 @@ func main() {
 
 	chanStop := make(chan interface{})
 
-	config := internal.InitConfig()
+	config := internal.InitConfig(false)//true)
 	binanceManager, err := binance.New(config, chanStop)
 	if err != nil {
 		logrus.Fatal("Couldn't access Binance API - API keys may be wrong or lack sufficient permissions [error: %v]", err)

@@ -33,6 +33,8 @@ type apiClient interface {
 	newOCO(symbol, listClientOrderID, side, limitClientOrderId, stopClientOrderId, stopLimitTimeInForce, newOrderRespType string, quantity, price, limitIcebergQty, stopPrice, stopLimitPrice, stopIcebergQty decimal.Decimal) (*binanceSpot.NewOCOOrderResponse, error)
 	// deleteOrder -
 	deleteOrder(symbol, origClientOrderID, newClientOrderID string, orderID int64) (*binanceSpot.DeleteOrderResponse, error)
+	// GetOpenOrder
+	getOpenOrder(symbol string) (*binanceSpot.DeleteOrderResponse, error)
 }
 
 type apiClientImpl struct {
@@ -49,19 +51,6 @@ func newApiClient(config internal.AppConfig) apiClient {
 		MarketClient: binanceSpot.NewMarketClient(config.HostRest, config.ApiKey),
 		recvTimeout:  config.RecvTimeout,
 	}
-
-
-	res, err := client.WalletClient.SAPIAccountAPIStatus(config.RecvTimeout)
-	_, _ = res, err
-
-	res2, err2 := client.WalletClient.SAPITradeFee("", config.RecvTimeout)
-	_, _ = res2, err2
-
-	res3, err3 := client.getBnbBurn()
-	_, _ = res3, err3
-
-	res4, err4 := client.getAccountInfo()
-	_, _ = res4, err4
 
 	return client
 }
@@ -98,12 +87,13 @@ func (c *apiClientImpl) getBnbBurn() (*GetBnbBurnResponse, error) {
 		return nil, errors.Errorf("Error: %s with code %d", resp.Message, resp.Code)
 	}
 
-	resp := interfaceResp.(*GetBnbBurnResponse)
-	return resp, nil
+	resp := interfaceResp.(GetBnbBurnResponse)
+	return &resp, nil
 }
 
 func (c *apiClientImpl) getSymbolTickerPrice(symbol string) ([]binanceSpot.SymbolPriceTickerResponse, error) {
 	interfaceResp, err := c.MarketClient.GetSymbolTickerPrice(symbol)
+	// interfaceResp, err := c.MarketClient.GetSymbolOrderBookTicker(symbol)
 	if err != nil {
 		return nil, err
 	} else if resp, ok := interfaceResp.(model.APIErrorResponse); ok {
@@ -191,6 +181,19 @@ func (c *apiClientImpl) deleteOrder(symbol, origClientOrderID, newClientOrderID 
 	resp := interfaceResp.(binanceSpot.DeleteOrderResponse)
 	return &resp, nil
 }
+
+func (c *apiClientImpl) getOpenOrder(symbol string) (*binanceSpot.DeleteOrderResponse, error) {
+	interfaceResp, err := c.TradeClient.GetOpenOrder(symbol, c.recvTimeout)
+	if err != nil {
+		return nil, err
+	} else if resp, ok := interfaceResp.(model.APIErrorResponse); ok {
+		return nil, errors.Errorf("Error: %s with code %d", resp.Message, resp.Code)
+	}
+
+	resp := interfaceResp.(binanceSpot.DeleteOrderResponse)
+	return &resp, nil
+}
+
 
 // extend binance
 

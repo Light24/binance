@@ -14,9 +14,11 @@ import (
 
 type Manager interface {
 	GetAccount() (*binanceSpot.AccountInfoResponse, error)
+	GetTickerPrices() (map[string]float64, error)
 	GetTickerPrice(symbol string) (float64, error)
+	GetOpenOrder(symbol string) (float64, error)
 	GetTradeFees() (map[string]decimal.Decimal, error)
-	GetFee(originSymbol string, targetSymbol string, selling bool) (float64, error)
+	GetFee(originSymbol string, targetSymbol string, currentBalance float64, targetBalance float64, baseFee decimal.Decimal, usingBnbForFees bool, optionalCoinPrice float64, selling bool) (float64, error)
 	GetUsingBnbForFees() (bool, error)
 	GetCurrencyBalance(symbol string /*, forceNotCache bool*/) (float64, error)
 	GetAltTick(originSymbol string, targetSymbol string) (int, error)
@@ -28,7 +30,7 @@ type Manager interface {
 	SellAlt(originSymbol string, targetSymbol string) (*binanceSpot.NewOrderResponseResult, error)
 
 	GetCurrentCoin() (string, error)
-	GetSupportedSymbols() (map[string]interface{}, error)
+	GetSupportedSymbols() (map[string]map[string]*ExchangeSymbol, error)
 }
 
 type ManagerImpl struct {
@@ -67,6 +69,25 @@ func (manager ManagerImpl) GetAccount() (*binanceSpot.AccountInfoResponse, error
 	return resp, nil
 }
 
+func (manager ManagerImpl) GetTickerPrices() (map[string]float64, error) {
+	resp, err := manager.api.getSymbolTickerPrice("")
+	if err != nil {
+		logrus.Errorf("GetSymbolTickerPrice %v", err)
+		return nil, err
+	}
+
+	prices := make(map[string]float64)
+	for _, item := range resp {
+		price, err := strconv.ParseFloat(item.Price, 64)
+		if err != nil {
+			return nil, err
+		}
+
+		prices[item.Symbol] = price
+	}
+	return prices, err
+}
+
 func (manager ManagerImpl) GetTickerPrice(symbol string) (float64, error) {
 	resp, err := manager.api.getSymbolTickerPrice(symbol)
 	if err != nil {
@@ -89,6 +110,18 @@ func (manager ManagerImpl) GetTickerPrice(symbol string) (float64, error) {
 	return strconv.ParseFloat(symbolPrice.Price, 64)
 }
 
+func (manager ManagerImpl) GetOpenOrder(symbol string) (float64, error) {
+	_, err := manager.api.getOpenOrder(symbol)
+	if err != nil {
+		logrus.Errorf("GetSymbolTickerPrice %v", err)
+		return 0, err
+	}
+
+		err = errors.Errorf("GetSymbolTickerPrice symbol %s not found", symbol)
+		return 0, err
+}
+
+
 func (manager ManagerImpl) GetTradeFees() (map[string]decimal.Decimal, error) {
 	resp, err := manager.api.sapiTradeFee("")
 	if err != nil {
@@ -106,28 +139,18 @@ func (manager ManagerImpl) GetTradeFees() (map[string]decimal.Decimal, error) {
 	return fees, nil
 }
 
-func (manager ManagerImpl) GetFee(originSymbol string, targetSymbol string, selling bool) (float64, error) {
-	tradeFees, err := manager.GetTradeFees()
-	if err != nil {
-		return 0, err
-	}
-
-	baseFee := tradeFees[originSymbol+targetSymbol]
-
-	usingBnbForFees, err := manager.GetUsingBnbForFees()
-	if err != nil {
-		baseFeeFloat64, _ := baseFee.Float64()
-		return baseFeeFloat64, err
-	} else if !usingBnbForFees {
+func (manager ManagerImpl) GetFee(originSymbol string, targetSymbol string, currentBalance float64, targetBalance float64, baseFee decimal.Decimal, usingBnbForFees bool, optionalCoinPrice float64, selling bool) (float64, error) {
+	if !usingBnbForFees {
 		baseFeeFloat64, _ := baseFee.Float64()
 		return baseFeeFloat64, nil
 	}
 
 	var amountTrading float64
+	var err error
 	if selling {
-		amountTrading, err = manager.SellQuantity(originSymbol, targetSymbol, 0)
+		amountTrading, err = manager.SellQuantity(originSymbol, targetSymbol, currentBalance)
 	} else {
-		amountTrading, err = manager.BuyQuantity(originSymbol, targetSymbol, 0, 0)
+		amountTrading, err = manager.BuyQuantity(originSymbol, targetSymbol, targetBalance, optionalCoinPrice)
 	}
 	if err != nil {
 		return 0, err
@@ -276,37 +299,37 @@ func (manager ManagerImpl) GetSymbolFilter(originSymbol string, targetSymbol str
 }
 
 func (manager ManagerImpl) SellQuantity(originSymbol string, targetSymbol string, originBalance float64) (float64, error) {
-	var err error
 	if originBalance == 0 {
-		originBalance, err = manager.GetCurrencyBalance(originSymbol)
-		if err != nil {
-			logrus.Errorf("GetAccount %v", err)
-			return 0, err
-		}
-	}
-
-	originTick, err := manager.GetAltTick(originSymbol, targetSymbol)
-	return math.Floor(originBalance*10*float64(originTick)) / float64(10*originTick), nil
-}
-
-func (manager ManagerImpl) BuyQuantity(originSymbol string, targetSymbol string, targetBalance float64, fromCoinPrice float64) (float64, error) {
-	var err error
-	if targetBalance == 0 {
-		targetBalance, err = manager.GetCurrencyBalance(targetSymbol)
-		if err != nil {
-			return 0, err
-		}
-	}
-
-	if fromCoinPrice == 0 {
-		fromCoinPrice, err = manager.GetTickerPrice(originSymbol + targetSymbol)
-		if err != nil {
-			return 0, err
-		}
+		err := errors.Errorf("Currency balance %s is empty", originSymbol)
+		logrus.Error(err)
+		return 0, err
 	}
 
 	originTick, err := manager.GetAltTick(originSymbol, targetSymbol)
 	if err != nil {
+		logrus.Error(err)
+		return 0, err
+	}
+
+	return math.Floor(originBalance*10*float64(originTick)) / float64(10*originTick), nil
+}
+
+func (manager ManagerImpl) BuyQuantity(originSymbol string, targetSymbol string, targetBalance float64, fromCoinPrice float64) (float64, error) {
+	if targetBalance == 0 {
+		err := errors.Errorf("Currency balance %s is empty.", targetSymbol)
+		logrus.Error(err)
+		return 0, err
+	}
+
+	if fromCoinPrice == 0 {
+		err := errors.Errorf("Coin price from %s to %s is zero.", originSymbol, targetSymbol)
+		logrus.Error(err)
+		return 0, err
+	}
+
+	originTick, err := manager.GetAltTick(originSymbol, targetSymbol)
+	if err != nil {
+		logrus.Error(err)
 		return 0, err
 	}
 
@@ -391,18 +414,29 @@ func (manager ManagerImpl) GetCurrentCoin() (string, error) {
 }
 
 // GetSupportedSymbols - return all possible symbols
-func (manager ManagerImpl) GetSupportedSymbols() (map[string]interface{}, error) {
+func (manager ManagerImpl) GetSupportedSymbols() (map[string]map[string]*ExchangeSymbol, error) {
 	resp, err := manager.api.getExchangeInfo()
 	if err != nil {
 		err = errors.Errorf("GetSymbolFilter error %v", err)
 		return nil, err
 	}
 
-	var supportedSymbols = make(map[string]interface{})
+	var supportedSymbols = make(map[string]map[string]*ExchangeSymbol)
 	for _, symbol := range resp.Symbols {
-		if symbol.IsSpotTradingAllowed {
-			supportedSymbols[symbol.BaseAsset] = nil
-			supportedSymbols[symbol.QuoteAsset] = nil
+		if symbol.Status != "TRADING" {
+			continue
+		}
+		if !symbol.IsSpotTradingAllowed {
+			continue
+		}
+
+		if supportedSymbols[symbol.BaseAsset] == nil {
+			supportedSymbols[symbol.BaseAsset] = make(map[string]*ExchangeSymbol)
+		}
+		supportedSymbols[symbol.BaseAsset][symbol.QuoteAsset] = &ExchangeSymbol{
+			BaseAsset:  symbol.BaseAsset,
+			QuoteAsset: symbol.QuoteAsset,
+			Filters:    symbol.Filters,
 		}
 	}
 

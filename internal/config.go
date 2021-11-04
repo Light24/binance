@@ -18,22 +18,26 @@ type AppConfig struct {
 	ScoutMultiplier float64
 }
 
-func InitConfig() AppConfig {
+func InitConfig(testNet bool) AppConfig {
 	var appConfig AppConfig
-	appConfig.ApiKey = "lgtrEDSGBbFm3eEoQL6oCrCNXRaWzAGJL4jAdvZIrtqqApWaBMKfW7WDnObIhGAt"
-	appConfig.ApiSecret = "qrw3iV9BynFEdwrMmmP4vkvusWeLCv1fC6O50veodZ5gBRZ4uKFBNoYeVn2v0Xpz"
 	appConfig.RecvTimeout = 10 * time.Second
 	appConfig.UseRealtime = false
-
-	testNet := true
-	appConfig.HostRest, appConfig.HostWss = binanceConfig.SpotRestHost, binanceConfig.SpotWssHost
-	if testNet {
-		appConfig.HostRest, appConfig.HostWss = "testnet.binance.vision", "testnet.binance.vision"
-	}
-
 	appConfig.strategy = "default"
 	appConfig.Bridge = "USDT"
 	appConfig.ScoutMultiplier = 5
+
+	if testNet {
+		appConfig.ApiKey = "lgtrEDSGBbFm3eEoQL6oCrCNXRaWzAGJL4jAdvZIrtqqApWaBMKfW7WDnObIhGAt"
+		appConfig.ApiSecret = "qrw3iV9BynFEdwrMmmP4vkvusWeLCv1fC6O50veodZ5gBRZ4uKFBNoYeVn2v0Xpz"
+		appConfig.HostRest = "testnet.binance.vision"
+		appConfig.HostWss = "testnet.binance.vision"
+	} else {
+		appConfig.ApiKey = "feBpm5gMBeKXi5SZkMmB5HDsEuC019ZQ6w4rARqy5e56E9O8f8WJYUS5Dy86ZLUI"
+		appConfig.ApiSecret = "V3Rspz4VQW4RnlUvZMMiFNGM4Wer4IDGHfsA8UoGLRAZrw6e93TjPkQg4fCBB4BQ"
+		appConfig.HostRest = binanceConfig.SpotRestHost
+		appConfig.HostWss = binanceConfig.SpotWssHost
+
+	}
 
 	return appConfig
 }

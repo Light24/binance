@@ -3,32 +3,21 @@ package strategies
 import (
 	"binance-trade-bot/internal"
 	"binance-trade-bot/internal/binance"
-	"binance-trade-bot/internal/utils"
 	"github.com/pkg/errors"
 	"github.com/shopspring/decimal"
 	"github.com/sirupsen/logrus"
 	"strconv"
 )
 
-type Strategy interface {
-	Scout() error
-}
-
-type strategyImpl struct {
+type testStrategy struct {
 	binanceManager binance.Manager
 	config         internal.AppConfig
 
 	balances map[string]float64
 }
 
-type ratioPair struct {
-	origin string
-	target string
-	ratio  float64
-}
-
-func NewStrategy(binanceManager binance.Manager, config internal.AppConfig) Strategy {
-	return &strategyImpl{
+func NewTestStrategy(binanceManager binance.Manager, config internal.AppConfig) Strategy {
+	return &testStrategy{
 		binanceManager,
 		config,
 		nil,
@@ -36,7 +25,7 @@ func NewStrategy(binanceManager binance.Manager, config internal.AppConfig) Stra
 }
 
 // Scout - Scout for potential jumps from the current coin to another coin
-func (strategy *strategyImpl) Scout() error {
+func (strategy *testStrategy) Scout() error {
 	account, err := strategy.binanceManager.GetAccount()
 	logrus.Info(account)
 
@@ -68,7 +57,7 @@ func (strategy *strategyImpl) Scout() error {
 	return strategy.jumpToBestCoin(currentSymbol, currentCoinPrice)
 }
 
-func (strategy *strategyImpl) jumpToBestCoin(currentSymbol string, currentCoinPrice float64) error {
+func (strategy *testStrategy) jumpToBestCoin(currentSymbol string, currentCoinPrice float64) error {
 	ratios, err := strategy.getRatios(currentSymbol, currentCoinPrice)
 	if err != nil {
 		return err
@@ -85,11 +74,11 @@ func (strategy *strategyImpl) jumpToBestCoin(currentSymbol string, currentCoinPr
 		return err
 	}
 
-	return strategy.transactionThroughBridge(bestRatio)
+	return strategy.jumpBestCoin(bestRatio)
 }
 
 // getRatios - Given a coin, get the current price ratio for every other enabled coin
-func (strategy *strategyImpl) getRatios(currentSymbol string, currentCoinPrice float64) ([]ratioPair, error) {
+func (strategy *testStrategy) getRatios(currentSymbol string, currentCoinPrice float64) ([]ratioPair, error) {
 	supportedSymbols, err := strategy.binanceManager.GetSupportedSymbols()
 	if err != nil {
 		return nil, err
@@ -99,68 +88,6 @@ func (strategy *strategyImpl) getRatios(currentSymbol string, currentCoinPrice f
 	if err != nil {
 		return nil, err
 	}
-
-	for baseSymbol, supportedSymbol := range supportedSymbols {
-		for quoteSymbol, exchange := range supportedSymbol {
-			priceApproximate := optionalCoinPrices[baseSymbol+quoteSymbol]
-			if priceApproximate != 0 {
-				exchange.PriceApproximateInQuote = priceApproximate
-
-				if supportedSymbols[quoteSymbol] == nil {
-					supportedSymbols[quoteSymbol] = make(map[string]*binance.ExchangeSymbol)
-				}
-				if supportedSymbols[quoteSymbol][baseSymbol] == nil {
-					supportedSymbols[quoteSymbol][baseSymbol] = &binance.ExchangeSymbol{
-						BaseAsset:               quoteSymbol,
-						QuoteAsset:              baseSymbol,
-						PriceApproximateInQuote: 1 / priceApproximate,
-					}
-				}
-			}
-		}
-	}
-
-	/*var maxRation float64
-	for symbol := range supportedSymbols {
-		ratio := utils.CalculateBestPrice(supportedSymbols, symbol)
-		maxRation = math.Max(maxRation, ratio)
-	}
-	logrus.Infof("maxRation is %f", maxRation)
-	*/
-
-	ratio, pathesToCurrency := utils.CalculateBestPrice(supportedSymbols, currentSymbol)
-	logrus.Infof("path to %s is %f %v", currentSymbol, ratio, pathesToCurrency)
-	if ratio <= 1.0 {
-		return nil, errors.New("Not found ratio")
-	}
-
-	price := 1.0
-	for i := range pathesToCurrency {
-		if pathesToCurrency[0] == pathesToCurrency[i] && i != 0 {
-			logrus.Infof("price %f vs real price %f", ratio, price)
-			if price < 1.000 {
-				return nil, errors.New("Not found ratio")
-			}
-			break
-		}
-
-		fromCoinPrice, err := strategy.binanceManager.GetTickerPrice(pathesToCurrency[i] + pathesToCurrency[i + 1])
-		if err != nil {
-			fromCoinPrice, err = strategy.binanceManager.GetTickerPrice(pathesToCurrency[i + 1] + pathesToCurrency[i])
-			logrus.Infof("PRICE from %s to %s is %f", pathesToCurrency[i + 1], pathesToCurrency[i], fromCoinPrice)
-			price *= 1 / fromCoinPrice
-		} else {
-			logrus.Infof("PRICE from %s to %s is %f", pathesToCurrency[i], pathesToCurrency[i + 1], fromCoinPrice)
-			price *= fromCoinPrice
-		}
-		// fromCoinPrice, err := strategy.binanceManager.GetOpenOrder(pathesToCurrency[i] + pathesToCurrency[i + 1])
-		if err != nil {
-			return nil, err
-		}
-
-	}
-
-	return nil, errors.New("Not found ratio")
 
 	tradeFees, err := strategy.binanceManager.GetTradeFees()
 	if err != nil {
@@ -220,7 +147,7 @@ func (strategy *strategyImpl) getRatios(currentSymbol string, currentCoinPrice f
 }
 
 // Jump from the source coin to the destination coin through bridge coin
-func (strategy *strategyImpl) transactionThroughBridge(bestRatio *ratioPair) error {
+func (strategy *testStrategy) jumpBestCoin(bestRatio *ratioPair) error {
 	balance, err := strategy.binanceManager.GetCurrencyBalance(bestRatio.origin)
 	if err != nil {
 		return err

@@ -26,7 +26,7 @@ func main() {
 
 	chanStop := make(chan interface{})
 
-	config := internal.InitConfig(false)//true)
+	config := internal.InitConfig(false)
 	binanceManager, err := binance.New(config, chanStop)
 	if err != nil {
 		logrus.Fatal("Couldn't access Binance API - API keys may be wrong or lack sufficient permissions [error: %v]", err)
@@ -39,7 +39,7 @@ func main() {
 		binanceManager.GetAccount()
 	*/
 
-	strategy := strategies.NewStrategy(binanceManager, config)
+	strategy := strategies.NewExchangeChain(binanceManager, config)
 	for {
 		strategy.Scout()
 		time.Sleep(500 * time.Millisecond)
